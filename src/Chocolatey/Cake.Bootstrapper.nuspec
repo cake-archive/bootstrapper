@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>cake.bootstrapper</id>
+    <title>Cake.Bootstrapper</title>
+    <version>0.0.0</version>
+    <authors>Patrik Svensson</authors>
+    <owners>Patrik Svensson</owners>
+    <summary>Cake (C# Make) is a build automation system.</summary>
+    <description>The Cake bootstrapper tool.</description>
+    <projectUrl>https://github.com/cake-build/bootstrapper</projectUrl>
+    <tags>Cake Script Build</tags>
+    <copyright></copyright>
+    <licenseUrl>https://raw.githubusercontent.com/cake-build/bootstrapper/develop/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes></releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\chocolateyInstall.ps1" target="tools" />
+  </files>
+</package>

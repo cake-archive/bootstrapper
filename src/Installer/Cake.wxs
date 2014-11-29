@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+   <Product Id="*" UpgradeCode="0027F26D-2440-4730-82A5-F37E51EE1022" 
+            Name="Cake Bootstrapper" Version="$(var.BuildVersion)" Manufacturer="Cake" Language="1033">
+
+      <Package InstallerVersion="200" 
+         Languages="1033"
+         SummaryCodepage="1252"
+         InstallScope="perMachine"
+         Compressed="yes" 
+         Comments="Windows Installer Package" 
+         Description="Cake Bootstrapper $(var.BuildVersion) Installer" />
+
+      <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
+
+      <Icon Id="ProductIcon" SourceFile="$(var.BinDir)\cake.ico"/>
+      <Property Id="ARPPRODUCTICON" Value="ProductIcon"/>
+      <Property Id="ARPHELPLINK" Value="http://cake.readthedocs.org"/>
+      <Property Id="ARPURLINFOABOUT" Value="https://github.com/cake-build/cake"/>
+      <Property Id="ARPNOREPAIR" Value="1"/>
+      <Property Id="ARPNOMODIFY" Value="1"/>
+
+      <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Installer does not support downgrading." />
+ 
+      <Property Id="INSTALLDIR">
+      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Cake" Name="InstallDir" />
+      </Property>
+
+      <Directory Id="TARGETDIR" Name="SourceDir">
+         <Directory Id="ProgramFilesFolder">
+            <Directory Id="INSTALLDIR" Name="Cake">
+               <Directory Id="POSHMODULESDIR" Name="Modules">
+                  <Directory Id="BOOTSTRAPPERDIR" Name="Cake.Bootstrapper">
+                     <Component Id="PowerShellComponents" Guid="BD5CEB1A-B38A-4934-9194-1E98A517577C">
+                        <!-- Copy binaries -->
+                        <File Name="Cake.Bootstrapper.dll" Source="$(var.BinDir)\Cake.Bootstrapper.dll"/>
+                        <File Name="Cake.Bootstrapper.psd1" Source="$(var.BinDir)\Cake.Bootstrapper.psd1"/>
+                        <File Name="Cake.Core.dll" Source="$(var.BinDir)\Cake.Core.dll"/>
+                        <File Name="Autofac.dll" Source="$(var.BinDir)\Autofac.dll"/>
+                        <File Name="NuGet.Core.dll" Source="$(var.BinDir)\NuGet.Core.dll"/>                                               
+                        <!-- Copy scripts -->
+                        <File Name="build.cake" Source="$(var.BinDir)\build.cake"/>
+                        <File Name="build.ps1" Source="$(var.BinDir)\build.ps1"/>
+                        <!-- Add to Powershell module path -->
+                        <Environment Id="HadoukenPowerShellModulePath" Action="set" Name="PSModulePath" Part="last" Permanent="no" System="yes" Value="[POSHMODULESDIR]" />
+                     </Component>
+                  </Directory>
+               </Directory>
+            </Directory>
+         </Directory>
+      </Directory>
+ 
+      <Feature Id="DefaultFeature" Level="1">
+         <ComponentRef Id="PowerShellComponents"/>
+      </Feature>
+   </Product>
+</Wix>
