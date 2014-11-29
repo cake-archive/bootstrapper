@@ -1,4 +1,4 @@
-$packageName = 'Cake.Bootstrapper'
+$packageName = 'cake-bootstrapper'
 $installerType = 'msi' 
 $url = '%DOWNLOAD_URL%'
 $silentArgs = '/quiet'
