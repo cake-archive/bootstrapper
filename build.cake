@@ -110,7 +110,7 @@ Task("Build-Chocolatey")
     .Does(() =>
 {
     // Create chocolateyInstall.ps1 in chocolatey tools output.
-    var url = "https://github.com/cake-build/bootstrapper/releases/download/v" + version + "/Cake-Bootstrapper-v" + version + ".zip";
+    var url = "https://github.com/cake-build/bootstrapper/releases/download/v" + version + "/Cake-Bootstrapper-v" + version + ".msi";
     string text = File.ReadAllText("./src/Chocolatey/tools/chocolateyInstall.ps1");
     text = text.Replace("%DOWNLOAD_URL%", url);
     File.WriteAllText(chocolateyToolsDirectory + "/chocolateyInstall.ps1", text);
