@@ -2,6 +2,11 @@
 
 The Cake Bootstrapper is a Powershell cmdlet that helps you set up a new Cake project by downloading dependencies, setting up the bootstrapper script and creating a Cake build script.
 
+##What is Cake?
+
+Cake (C# Make) is a build automation system with a C# DSL to do things like compiling code, copy files/folders, running unit tests, compress files and build NuGet packages.
+For more information about the Cake project, see [https://github.com/cake-build/cake](https://github.com/cake-build/cake).
+
 ##Usage
 
 Start by either cloning and building this repository (by executing `build.ps1`) and executing the MSI artifact, or install the Powershell cmdlet via Chocolatey:
