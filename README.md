@@ -1,6 +1,6 @@
 #Cake Bootstrapper
 
-The Cake Bootstrapper is a Powershell cmdlet that helps you set up a new Cake project by downloading dependencies, setting up the bootstrapper script and creating a Cake build script.
+The Cake Bootstrapper is a Powershell cmdlet that helps you set up a new [Cake](https://github.com/cake-build/cake) build by downloading dependencies, setting up the bootstrapper script and creating a Cake build script.
 
 ##What is Cake?
 
