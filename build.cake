@@ -16,7 +16,7 @@ var version = releaseNotes.Version.ToString();
 // DIRECTORIES
 //////////////////////////////////////////////////////////////////////
 
-var buildDirectory = "./build/" + "v" + version;
+var buildDirectory = "./build/v" + version;
 var buildBinDirectory = buildDirectory + "/bin";
 var buildInstallerDirectory = buildDirectory + "/installer";
 var buildCandleDirectory = buildDirectory + "/installer/wixobj";
@@ -42,6 +42,7 @@ Task("Update-Versions")
     .IsDependentOn("Clean")
     .Does(() =>
 {
+    // Update the shared assembly info.
     var file = "./src/SolutionInfo.cs";
     CreateAssemblyInfo(file, new AssemblyInfoSettings {
         Product = "Cake",
@@ -72,12 +73,17 @@ Task("Copy-Files")
     .IsDependentOn("Build")
     .Does(() =>
 {   
+    // Copy binaries.
     CopyFileToDirectory(outputDirectory + "/Cake.Bootstrapper.dll", buildBinDirectory);
     CopyFileToDirectory(outputDirectory + "/Cake.Bootstrapper.psd1", buildBinDirectory);
     CopyFileToDirectory(outputDirectory + "/Cake.Core.dll", buildBinDirectory);
     CopyFileToDirectory(outputDirectory + "/Autofac.dll", buildBinDirectory);
     CopyFileToDirectory(outputDirectory + "/NuGet.Core.dll", buildBinDirectory);
+
+    // Copy icon (used by add/remove programs).
     CopyFileToDirectory("./res/cake.ico", buildBinDirectory);    
+
+    // Copy scripts.
     CopyFileToDirectory("./res/scripts/build.cake", buildBinDirectory);
     CopyFileToDirectory("./res/scripts/build.ps1", buildBinDirectory);
 });
@@ -86,7 +92,7 @@ Task("Build-Installer")
     .IsDependentOn("Copy-Files")
     .Does(() =>
 {
-    // Invoke Candle
+    // Invoke Candle (WiX compiler).
     var files = GetFiles("./src/Installer/**/*.wxs");
     WiXCandle(files, new CandleSettings {
         OutputDirectory = buildCandleDirectory,
@@ -97,7 +103,7 @@ Task("Build-Installer")
         }
     });
 
-    // Invoke Light
+    // Invoke Light (WiX linker).
     var objFiles = GetFiles(buildCandleDirectory + "/*.wixobj");
     WiXLight(objFiles, new LightSettings {
         OutputFile = buildInstallerDirectory + "/Cake-Bootstrapper-v" + version + ".msi",
@@ -115,6 +121,7 @@ Task("Build-Chocolatey")
     text = text.Replace("%DOWNLOAD_URL%", url);
     File.WriteAllText(chocolateyToolsDirectory + "/chocolateyInstall.ps1", text);
 
+    // Create the nuget package.
     NuGetPack("./src/Chocolatey/Cake.Bootstrapper.nuspec", new NuGetPackSettings {
         Version = version,
         ReleaseNotes = releaseNotes.Notes.ToArray(),
