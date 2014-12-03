@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using NuGet;
 
-namespace Cake.Bootstrapper.NuGet
+namespace Cake.Bootstrapper.Installer.NuGet
 {
     internal sealed class NuGetPackageVersionProber : INugetPackageVersionProber
     {

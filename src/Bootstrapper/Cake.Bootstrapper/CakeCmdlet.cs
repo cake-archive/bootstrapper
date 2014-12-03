@@ -1,8 +1,6 @@
 ﻿using System.Management.Automation;
 using Autofac;
-using Cake.Bootstrapper.Commands;
 using Cake.Bootstrapper.Diagnostics;
-using Cake.Bootstrapper.NuGet;
 using Cake.Bootstrapper.Runtime;
 using Cake.Core;
 using Cake.Core.Diagnostics;
@@ -17,9 +15,12 @@ namespace Cake.Bootstrapper
         {
             using (var container = BuildContainer())
             {
+                // Get the session.
+                var session = container.Resolve<ISessionState>();
+
                 // Get the environment and set the working directory.
                 var environment = container.Resolve<ICakeEnvironment>();
-                environment.WorkingDirectory = SessionState.Path.CurrentFileSystemLocation.Path;
+                environment.WorkingDirectory = session.FileSystemLocation;
 
                 // Resolve the command.
                 var command = container.Resolve<TCommand>();
@@ -34,31 +35,23 @@ namespace Cake.Bootstrapper
 
         public abstract void SetCommandParameters(TCommand command);
 
+        public virtual void RegisterDependencies(ContainerBuilder builder)
+        {            
+        }
+
         private IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
 
-            // Register the command.
             builder.RegisterType<TCommand>().SingleInstance();
-
-            // Runtime specific registrations.
             builder.RegisterInstance(this).As<Cmdlet>().As<PSCmdlet>().SingleInstance();
             builder.RegisterType<PowerShellRuntime>().As<IRuntime>().SingleInstance();
-
-            // File system and environment specific registrations.
             builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
-            builder.RegisterType<CakeEnvironment>().As<ICakeEnvironment>().SingleInstance();
-
-            // Diagnostic specific registrations.
+            builder.RegisterType<CakeEnvironment>().As<ICakeEnvironment>().SingleInstance();            
             builder.RegisterType<PowerShellLog>().As<ICakeLog>().SingleInstance();
-            
-            // NuGet specific registrations.
-            builder.RegisterType<NuGetPackageVersionProber>()
-                .As<INugetPackageVersionProber>()
-                .SingleInstance();
-            builder.RegisterType<NuGetPackageConfigurationCreator>()
-                .As<INuGetPackageConfigurationCreator>()
-                .SingleInstance();
+            builder.RegisterType<PowerShellSessionState>().As<ISessionState>();
+
+            RegisterDependencies(builder);
 
             return builder.Build();
         }

@@ -1,4 +1,4 @@
-﻿namespace Cake.Bootstrapper.Commands
+﻿namespace Cake.Bootstrapper
 {
     public interface ICommand
     {

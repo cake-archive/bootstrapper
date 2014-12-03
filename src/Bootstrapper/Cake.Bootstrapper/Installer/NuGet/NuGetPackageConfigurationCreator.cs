@@ -4,7 +4,7 @@ using Cake.Core;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 
-namespace Cake.Bootstrapper.NuGet
+namespace Cake.Bootstrapper.Installer.NuGet
 {
     internal sealed class NuGetPackageConfigurationCreator : INuGetPackageConfigurationCreator
     {

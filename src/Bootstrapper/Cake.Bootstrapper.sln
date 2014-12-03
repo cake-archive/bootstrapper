@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cake.Bootstrapper", "Cake.Bootstrapper\Cake.Bootstrapper.csproj", "{69F01920-D32A-479B-BA88-7AEED898D4BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cake.Bootstrapper.Tests", "Cake.Bootstrapper.Tests\Cake.Bootstrapper.Tests.csproj", "{7739C051-EB1C-4101-AE68-C91653119C5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{69F01920-D32A-479B-BA88-7AEED898D4BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69F01920-D32A-479B-BA88-7AEED898D4BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69F01920-D32A-479B-BA88-7AEED898D4BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7739C051-EB1C-4101-AE68-C91653119C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7739C051-EB1C-4101-AE68-C91653119C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7739C051-EB1C-4101-AE68-C91653119C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7739C051-EB1C-4101-AE68-C91653119C5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

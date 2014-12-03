@@ -1,6 +1,6 @@
 ﻿using Cake.Core.IO;
 
-namespace Cake.Bootstrapper.NuGet
+namespace Cake.Bootstrapper.Installer.NuGet
 {
     public interface INuGetPackageConfigurationCreator
     {

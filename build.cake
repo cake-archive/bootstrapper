@@ -18,12 +18,14 @@ var version = releaseNotes.Version.ToString();
 
 var buildDirectory = "./build/v" + version;
 var buildBinDirectory = buildDirectory + "/bin";
+var testResultDirectory = buildDirectory + "/test-results";
 var buildInstallerDirectory = buildDirectory + "/installer";
 var buildCandleDirectory = buildDirectory + "/installer/wixobj";
 var chocolateyRoot = buildDirectory + "/chocolatey";
 var chocolateyToolsDirectory = chocolateyRoot + "/tools";
 
-var binDirectory = "./src/Bootstrapper/Cake.Bootstrapper/bin/";
+var sourceDirectory = "./src/Bootstrapper";
+var binDirectory = sourceDirectory + "/Cake.Bootstrapper/bin/";
 var outputDirectory = binDirectory + configuration;
 
 //////////////////////////////////////////////////////////////////////
@@ -34,7 +36,7 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectories(new[] { buildDirectory, buildBinDirectory,
-    	buildInstallerDirectory, buildCandleDirectory, 
+    	buildInstallerDirectory, buildCandleDirectory, testResultDirectory,
         chocolateyRoot, chocolateyToolsDirectory, outputDirectory });
 });
 
@@ -69,16 +71,30 @@ Task("Build")
             .UseToolVersion(MSBuildToolVersion.NET45));
 });
 
-Task("Copy-Files")
+Task("Run-Unit-Tests")
+    .Description("Runs unit tests.")
     .IsDependentOn("Build")
+    .Does(() =>
+{
+    // Run unit tests.
+    XUnit2("./src/**/bin/" + configuration + "/*.Tests.dll", new XUnit2Settings {
+        OutputDirectory = testResultDirectory,
+        XmlReportV1 = true
+    }); 
+});
+
+Task("Copy-Files")
+    .IsDependentOn("Run-Unit-Tests")
     .Does(() =>
 {   
     // Copy binaries.
-    CopyFileToDirectory(outputDirectory + "/Cake.Bootstrapper.dll", buildBinDirectory);
-    CopyFileToDirectory(outputDirectory + "/Cake.Bootstrapper.psd1", buildBinDirectory);
+    CopyFileToDirectory(outputDirectory + "/Cake.Bootstrapper.dll", buildBinDirectory);    
     CopyFileToDirectory(outputDirectory + "/Cake.Core.dll", buildBinDirectory);
     CopyFileToDirectory(outputDirectory + "/Autofac.dll", buildBinDirectory);
     CopyFileToDirectory(outputDirectory + "/NuGet.Core.dll", buildBinDirectory);
+
+    // Copy PowerShell module manifest.
+    CopyFileToDirectory(sourceDirectory + "/Cake.Bootstrapper.psd1", buildBinDirectory);
 
     // Copy icon (used by add/remove programs).
     CopyFileToDirectory("./res/cake.ico", buildBinDirectory);    
@@ -88,8 +104,19 @@ Task("Copy-Files")
     CopyFileToDirectory("./res/scripts/build.ps1", buildBinDirectory);
 });
 
-Task("Build-Installer")
+Task("Set-Module-Manifest-Version")
     .IsDependentOn("Copy-Files")
+    .Does(() =>
+{
+    // Replace module version.
+    var path = buildBinDirectory + "/Cake.Bootstrapper.psd1";
+    string text = File.ReadAllText(path);
+    text = text.Replace("%MODULE_VERSION%", version);
+    File.WriteAllText(path, text);    
+});
+
+Task("Build-Installer")
+    .IsDependentOn("Set-Module-Manifest-Version")
     .Does(() =>
 {
     // Invoke Candle (WiX compiler).
