@@ -12,7 +12,7 @@
     <iconUrl>https://raw.githubusercontent.com/cake-build/graphics/master/png/cake-medium.png</iconUrl>
     <tags>Cake Script Build PowerShell</tags>
     <copyright>Copyright (c) Patrik Svensson 2014</copyright>
-    <licenseUrl>https://raw.githubusercontent.com/cake-build/bootstrapper/develop/LICENSE</licenseUrl>
+    <licenseUrl>https://raw.githubusercontent.com/cake-build/bootstrapper/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes></releaseNotes>
   </metadata>
