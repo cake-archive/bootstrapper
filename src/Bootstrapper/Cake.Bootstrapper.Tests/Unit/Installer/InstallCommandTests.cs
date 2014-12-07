@@ -1,6 +1,7 @@
 ﻿using System;
 using Cake.Bootstrapper.Installer;
 using Cake.Bootstrapper.Tests.Fixtures;
+using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using NSubstitute;
 using Xunit;
@@ -194,6 +195,23 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // Then                
                 fixture.GitIgnorePatcher.Received(1).Patch(
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
+            }
+
+            [Fact]
+            public void Should_Write_To_Log_If_GitIgnore_Was_Patched()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.GitIgnore.Exists.Returns(true);
+                fixture.GitIgnorePatcher.Patch(Arg.Any<FilePath>()).Returns(true);
+                var command = fixture.CreateCommand();
+
+                // When
+                command.Execute();
+
+                // Then
+                fixture.Log.Received(1).Write(
+                    Verbosity.Normal, LogLevel.Information, " -> Patched .gitignore.");
             }
 
             [Fact]
