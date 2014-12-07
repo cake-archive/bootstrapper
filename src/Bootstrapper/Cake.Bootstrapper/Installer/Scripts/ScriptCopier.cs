@@ -3,7 +3,7 @@ using Cake.Core;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 
-namespace Cake.Bootstrapper.Installer.IO
+namespace Cake.Bootstrapper.Installer.Scripts
 {
     internal sealed class ScriptCopier : IScriptCopier
     {

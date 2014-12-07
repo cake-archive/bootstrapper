@@ -15,7 +15,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
             public void Should_Set_Source_To_Default_Value()
             {
                 // Given, When
-                var command = new InstallCommand(null, null, null, null, null, null, null);
+                var command = new InstallCommand(null, null, null, null, null, null, null, null);
 
                 // Then
                 Assert.Equal("https://raw.githubusercontent.com/cake-build/bootstrapper/master/res/", command.Source);
@@ -26,7 +26,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
         {
             [Fact]
             public void Should_Create_Tools_Directory()
-            {                
+            {
                 // Given
                 var fixture = new InstallCommandFixture();
                 fixture.ToolsDirectory.Exists.Returns(false);
@@ -178,6 +178,38 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
 
                 // Then                
                 fixture.ScriptCopier.Received(0).Copy("build.cake");
+            }
+
+            [Fact]
+            public void Should_Patch_GitIgnore()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.GitIgnore.Exists.Returns(true);
+                var command = fixture.CreateCommand();
+
+                // When
+                command.Execute();
+
+                // Then                
+                fixture.GitIgnorePatcher.Received(1).Patch(
+                    Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
+            }
+
+            [Fact]
+            public void Should_Not_Patch_GitIgnore_If_It_Does_Not_Exist_On_Disc()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.GitIgnore.Exists.Returns(false);
+                var command = fixture.CreateCommand();
+
+                // When
+                command.Execute();
+
+                // Then                
+                fixture.GitIgnorePatcher.Received(0).Patch(
+                    Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
             }
         }
     }

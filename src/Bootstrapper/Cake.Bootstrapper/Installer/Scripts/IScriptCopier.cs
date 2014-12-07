@@ -1,4 +1,4 @@
-namespace Cake.Bootstrapper.Installer.IO
+namespace Cake.Bootstrapper.Installer.Scripts
 {
     public interface IScriptCopier
     {

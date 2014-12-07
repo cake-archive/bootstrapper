@@ -2,7 +2,7 @@
 using System.Net;
 using Cake.Core.IO;
 
-namespace Cake.Bootstrapper.Installer.Net
+namespace Cake.Bootstrapper.Net
 {
     internal sealed class HttpDownloader : IHttpDownloader
     {

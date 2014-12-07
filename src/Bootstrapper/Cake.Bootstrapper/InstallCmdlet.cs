@@ -1,9 +1,10 @@
 ﻿using System.Management.Automation;
 using Autofac;
 using Cake.Bootstrapper.Installer;
-using Cake.Bootstrapper.Installer.IO;
-using Cake.Bootstrapper.Installer.Net;
+using Cake.Bootstrapper.Installer.GitIgnore;
 using Cake.Bootstrapper.Installer.NuGet;
+using Cake.Bootstrapper.Installer.Scripts;
+using Cake.Bootstrapper.Net;
 
 namespace Cake.Bootstrapper
 {
@@ -15,19 +16,17 @@ namespace Cake.Bootstrapper
 
         public override void RegisterDependencies(ContainerBuilder builder)
         {
-            // Register NuGet package configuration creator.
             builder.RegisterType<NuGetPackageConfigurationCreator>()
                 .As<INuGetPackageConfigurationCreator>()
                 .SingleInstance();
-
-            // Register NuGet package version prober.
+            
             builder.RegisterType<NuGetPackageVersionProber>()
                 .As<INugetPackageVersionProber>()
                 .SingleInstance();
 
-            // Misc registrations.
             builder.RegisterType<ScriptCopier>().As<IScriptCopier>().SingleInstance();
-            builder.RegisterType<HttpDownloader>().As<IHttpDownloader>().SingleInstance();
+
+            builder.RegisterType<GitIgnorePatcher>().As<IGitIgnorePatcher>().SingleInstance();
         }
 
         public override void SetCommandParameters(InstallCommand command)

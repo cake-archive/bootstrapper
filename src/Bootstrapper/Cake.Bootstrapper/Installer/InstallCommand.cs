@@ -1,7 +1,8 @@
 ﻿using System;
-using Cake.Bootstrapper.Installer.IO;
-using Cake.Bootstrapper.Installer.Net;
+using Cake.Bootstrapper.Installer.GitIgnore;
 using Cake.Bootstrapper.Installer.NuGet;
+using Cake.Bootstrapper.Installer.Scripts;
+using Cake.Bootstrapper.Net;
 using Cake.Bootstrapper.Runtime;
 using Cake.Core;
 using Cake.Core.Diagnostics;
@@ -18,12 +19,13 @@ namespace Cake.Bootstrapper.Installer
         private readonly INuGetPackageConfigurationCreator _packageConfigCreator;
         private readonly IScriptCopier _scriptCopier;
         private readonly IHttpDownloader _downloader;
+        private readonly IGitIgnorePatcher _gitIgnorePatcher;
 
         public string Source { get; set; }
 
         public InstallCommand(IRuntime runtime, IFileSystem fileSystem, ICakeEnvironment environment,
             ICakeLog log, INuGetPackageConfigurationCreator packageConfigCreator,
-            IScriptCopier scriptCopier, IHttpDownloader downloader)
+            IScriptCopier scriptCopier, IHttpDownloader downloader, IGitIgnorePatcher gitIgnorePatcher)
         {
             _runtime = runtime;
             _fileSystem = fileSystem;
@@ -32,6 +34,7 @@ namespace Cake.Bootstrapper.Installer
             _packageConfigCreator = packageConfigCreator;
             _scriptCopier = scriptCopier;
             _downloader = downloader;
+            _gitIgnorePatcher = gitIgnorePatcher;
 
             // Set default parameter values.
             Source = "https://raw.githubusercontent.com/cake-build/bootstrapper/master/res/";
@@ -56,10 +59,6 @@ namespace Cake.Bootstrapper.Installer
                 _downloader.Download(new Uri("http://nuget.org/nuget.exe"), nugetFilePath);
                 _log.Information(" -> Downloaded NuGet executable.");
             }
-            else
-            {
-                _log.Warning("Did not download NuGet executable since it already exist.");
-            }
 
             // Create packages.config
             ReportProgress("Generating NuGet package configuration...", 50);
@@ -68,10 +67,6 @@ namespace Cake.Bootstrapper.Installer
             {
                 _packageConfigCreator.Generate(toolsPath);
                 _log.Information(" -> Generated NuGet package configuration.");
-            }
-            else
-            {
-                _log.Warning("Did not generate NuGet package configuration since it already exist.");
             }
 
             // Copy bootstrapper script
@@ -82,23 +77,24 @@ namespace Cake.Bootstrapper.Installer
                 _scriptCopier.Copy("build.ps1");
                 _log.Information(" -> Copied bootstrapper script.");
             }
-            else
-            {
-                _log.Warning("Did not copy bootstrapper script since it already exist.");
-            }
 
             // Copy build script
-            ReportProgress("Preparing build script...", 100);
+            ReportProgress("Preparing build script...", 85);
             var buildScriptPath = new FilePath("build.cake").MakeAbsolute(_environment);
             if (!_fileSystem.Exist(buildScriptPath))
             {
                 _scriptCopier.Copy("build.cake");
                 _log.Information(" -> Copied build script.");
             }
-            else
+
+            // Patch .gitignore file.
+            ReportProgress("Patching .gitignore...", 100);
+            var gitIgnorePath = new FilePath(".gitignore").MakeAbsolute(_environment);
+            if (_fileSystem.Exist(gitIgnorePath))
             {
-                _log.Warning("Did not add build script since it already exist.");
-            }
+                _gitIgnorePatcher.Patch(gitIgnorePath);
+                _log.Information(" -> Patched .gitignore.");
+            }            
         }
 
         private void ReportProgress(string description, int percentage)

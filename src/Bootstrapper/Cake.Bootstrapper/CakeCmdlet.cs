@@ -1,6 +1,7 @@
 ﻿using System.Management.Automation;
 using Autofac;
 using Cake.Bootstrapper.Diagnostics;
+using Cake.Bootstrapper.Net;
 using Cake.Bootstrapper.Runtime;
 using Cake.Core;
 using Cake.Core.Diagnostics;
@@ -50,6 +51,7 @@ namespace Cake.Bootstrapper
             builder.RegisterType<CakeEnvironment>().As<ICakeEnvironment>().SingleInstance();            
             builder.RegisterType<PowerShellLog>().As<ICakeLog>().SingleInstance();
             builder.RegisterType<PowerShellSessionState>().As<ISessionState>();
+            builder.RegisterType<HttpDownloader>().As<IHttpDownloader>().SingleInstance();
 
             RegisterDependencies(builder);
 

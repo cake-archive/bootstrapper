@@ -63,14 +63,16 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="CakeCmdlet.cs" />
+    <Compile Include="Extensions\FileExtensions.cs" />
+    <Compile Include="Installer\GitIgnore\GitIgnorePatcher.cs" />
     <Compile Include="Installer\InstallCommand.cs" />
     <Compile Include="Diagnostics\PowerShellLog.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="InstallCmdlet.cs" />
-    <Compile Include="Installer\IO\IScriptCopier.cs" />
-    <Compile Include="Installer\IO\ScriptCopier.cs" />
-    <Compile Include="Installer\Net\HttpDownloader.cs" />
-    <Compile Include="Installer\Net\IHttpDownloader.cs" />
+    <Compile Include="Installer\Scripts\IScriptCopier.cs" />
+    <Compile Include="Installer\Scripts\ScriptCopier.cs" />
+    <Compile Include="Net\HttpDownloader.cs" />
+    <Compile Include="Net\IHttpDownloader.cs" />
     <Compile Include="Runtime\IRuntime.cs" />
     <Compile Include="Installer\NuGet\INuGetPackageConfigurationCreator.cs" />
     <Compile Include="Installer\NuGet\INugetPackageVersionProber.cs" />

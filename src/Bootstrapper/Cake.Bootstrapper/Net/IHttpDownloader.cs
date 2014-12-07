@@ -1,7 +1,7 @@
 ﻿using System;
 using Cake.Core.IO;
 
-namespace Cake.Bootstrapper.Installer.Net
+namespace Cake.Bootstrapper.Net
 {
     public interface IHttpDownloader
     {

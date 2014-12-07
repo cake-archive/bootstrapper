@@ -1,7 +1,8 @@
 ﻿using Cake.Bootstrapper.Installer;
-using Cake.Bootstrapper.Installer.IO;
-using Cake.Bootstrapper.Installer.Net;
+using Cake.Bootstrapper.Installer.GitIgnore;
 using Cake.Bootstrapper.Installer.NuGet;
+using Cake.Bootstrapper.Installer.Scripts;
+using Cake.Bootstrapper.Net;
 using Cake.Bootstrapper.Runtime;
 using Cake.Core;
 using Cake.Core.Diagnostics;
@@ -19,12 +20,14 @@ namespace Cake.Bootstrapper.Tests.Fixtures
         public INuGetPackageConfigurationCreator PackageConfigurationCreator { get; set; }
         public IScriptCopier ScriptCopier { get; set; }
         public IHttpDownloader Downloader { get; set; }
+        public IGitIgnorePatcher GitIgnorePatcher { get; set; }
 
         public IDirectory ToolsDirectory { get; set; }
         public IFile NuGetExecutable { get; set; }
         public IFile PackagesConfiguration { get; set; }
         public IFile BootstrapperScript { get; set; }
         public IFile BuildScript { get; set; }
+        public IFile GitIgnore { get; set; }
 
         public InstallCommandFixture()
         {
@@ -35,6 +38,7 @@ namespace Cake.Bootstrapper.Tests.Fixtures
             PackageConfigurationCreator = Substitute.For<INuGetPackageConfigurationCreator>();
             ScriptCopier = Substitute.For<IScriptCopier>();
             Downloader = Substitute.For<IHttpDownloader>();
+            GitIgnorePatcher = Substitute.For<IGitIgnorePatcher>();
 
             // Initialize environment.
             Environment = Substitute.For<ICakeEnvironment>();
@@ -65,12 +69,17 @@ namespace Cake.Bootstrapper.Tests.Fixtures
             BuildScript = Substitute.For<IFile>();
             BuildScript.Exists.Returns(false);
             FileSystem.GetFile(Arg.Is<FilePath>(p => p.FullPath == "/Working/build.cake")).Returns(BuildScript);
+
+            GitIgnore = Substitute.For<IFile>();
+            GitIgnore.Exists.Returns(false);
+            FileSystem.GetFile(Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore")).Returns(GitIgnore);
         }
 
         public InstallCommand CreateCommand()
         {
             return new InstallCommand(Runtime, FileSystem, Environment,
-                Log, PackageConfigurationCreator, ScriptCopier, Downloader);
+                Log, PackageConfigurationCreator, ScriptCopier,
+                Downloader, GitIgnorePatcher);
         }
     }
 }
