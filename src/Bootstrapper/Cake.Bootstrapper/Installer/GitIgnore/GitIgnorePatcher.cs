@@ -17,17 +17,23 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
             _fileSystem = fileSystem;
         }
 
-        public void Patch(FilePath path)
+        public bool Patch(FilePath path)
         {
             var file = _fileSystem.GetFile(path);
             if (!file.Exists)
             {
-                return;
+                return false;
             }
 
-            // Read all lines and remove the Cake related stuff.
+            // Read all lines and remove the Cake related stuff.            
+            bool needsPatching;
+            var lines = ReadLines(file, out needsPatching);
+            if (!needsPatching)
+            {
+                return false;
+            }
+
             // Add the content we want to add the end of the file.
-            var lines = ReadLines(file);
             lines.Add(string.Empty);
             foreach (var line in _content)
             {
@@ -43,10 +49,14 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
                     writer.WriteLine(line);
                 }
             }
+
+            return true;
         }
 
-        private List<string> ReadLines(IFile file)
+        private List<string> ReadLines(IFile file, out bool needsPatching)
         {
+            var existing = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
             using (var stream = file.OpenRead())
             using (var reader = new StreamReader(stream, true))
             {
@@ -58,11 +68,18 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
                     {
                         break;
                     }
+
                     if (!_content.Contains(line, StringComparer.Ordinal))
                     {
                         readLines.Add(line);
                     }
+                    else
+                    {
+                        existing.Add(line);
+                    }
                 }
+
+                needsPatching = existing.Count != _content.Length;
                 return RemoveTrailingEmptyLines(readLines);
             }
         }

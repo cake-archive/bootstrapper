@@ -69,8 +69,8 @@
     <Compile Include="Diagnostics\PowerShellLog.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="InstallCmdlet.cs" />
-    <Compile Include="Installer\Scripts\IScriptCopier.cs" />
-    <Compile Include="Installer\Scripts\ScriptCopier.cs" />
+    <Compile Include="Installer\Resources\IFileCopier.cs" />
+    <Compile Include="Installer\Resources\FileCopier.cs" />
     <Compile Include="Net\HttpDownloader.cs" />
     <Compile Include="Net\IHttpDownloader.cs" />
     <Compile Include="Runtime\IRuntime.cs" />

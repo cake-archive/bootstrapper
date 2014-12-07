@@ -3,15 +3,15 @@ using Cake.Core;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 
-namespace Cake.Bootstrapper.Installer.Scripts
+namespace Cake.Bootstrapper.Installer.Resources
 {
-    internal sealed class ScriptCopier : IScriptCopier
+    internal sealed class FileCopier : IFileCopier
     {
         private readonly IFileSystem _fileSystem;
         private readonly ICakeEnvironment _environment;
         private readonly ICakeLog _log;
 
-        public ScriptCopier(IFileSystem fileSystem, ICakeEnvironment environment, ICakeLog log)
+        public FileCopier(IFileSystem fileSystem, ICakeEnvironment environment, ICakeLog log)
         {
             _fileSystem = fileSystem;
             _environment = environment;
@@ -38,12 +38,12 @@ namespace Cake.Bootstrapper.Installer.Scripts
         {
             if (!source.Exists)
             {
-                _log.Error("Could not find script {0}.", source.Path.FullPath);
+                _log.Error("Could not find file {0}.", source.Path.FullPath);
                 return false;
             }
             if (destination.Exists)
             {
-                _log.Error("The script {0} already exist.", destination.Path.FullPath);
+                _log.Error("The file {0} already exist.", destination.Path.FullPath);
                 return false;
             }
 

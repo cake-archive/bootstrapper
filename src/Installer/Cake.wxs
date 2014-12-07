@@ -42,6 +42,8 @@
                         <!-- Copy scripts -->
                         <File Name="build.cake" Source="$(var.BinDir)\build.cake"/>
                         <File Name="build.ps1" Source="$(var.BinDir)\build.ps1"/>
+                        <!-- AppVeyor configuration -->
+                        <File Name="appveyor.yml" Source="$(var.BinDir)\appveyor.yml"/>
                         <!-- Add to Powershell module path -->
                         <Environment Id="HadoukenPowerShellModulePath" Action="set" Name="PSModulePath" Part="last" Permanent="no" System="yes" Value="[POSHMODULESDIR]" />
                      </Component>

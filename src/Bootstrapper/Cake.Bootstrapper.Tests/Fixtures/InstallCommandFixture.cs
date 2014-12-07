@@ -1,7 +1,7 @@
 ﻿using Cake.Bootstrapper.Installer;
 using Cake.Bootstrapper.Installer.GitIgnore;
 using Cake.Bootstrapper.Installer.NuGet;
-using Cake.Bootstrapper.Installer.Scripts;
+using Cake.Bootstrapper.Installer.Resources;
 using Cake.Bootstrapper.Net;
 using Cake.Bootstrapper.Runtime;
 using Cake.Core;
@@ -18,7 +18,7 @@ namespace Cake.Bootstrapper.Tests.Fixtures
         public ICakeEnvironment Environment { get; set; }
         public ICakeLog Log { get; set; }
         public INuGetPackageConfigurationCreator PackageConfigurationCreator { get; set; }
-        public IScriptCopier ScriptCopier { get; set; }
+        public IFileCopier FileCopier { get; set; }
         public IHttpDownloader Downloader { get; set; }
         public IGitIgnorePatcher GitIgnorePatcher { get; set; }
 
@@ -28,6 +28,7 @@ namespace Cake.Bootstrapper.Tests.Fixtures
         public IFile BootstrapperScript { get; set; }
         public IFile BuildScript { get; set; }
         public IFile GitIgnore { get; set; }
+        public IFile AppVeyorConfiguration { get; set; }
 
         public InstallCommandFixture()
         {
@@ -36,7 +37,7 @@ namespace Cake.Bootstrapper.Tests.Fixtures
             FileSystem = Substitute.For<IFileSystem>();
             Log = Substitute.For<ICakeLog>();
             PackageConfigurationCreator = Substitute.For<INuGetPackageConfigurationCreator>();
-            ScriptCopier = Substitute.For<IScriptCopier>();
+            FileCopier = Substitute.For<IFileCopier>();
             Downloader = Substitute.For<IHttpDownloader>();
             GitIgnorePatcher = Substitute.For<IGitIgnorePatcher>();
 
@@ -73,12 +74,16 @@ namespace Cake.Bootstrapper.Tests.Fixtures
             GitIgnore = Substitute.For<IFile>();
             GitIgnore.Exists.Returns(false);
             FileSystem.GetFile(Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore")).Returns(GitIgnore);
+
+            AppVeyorConfiguration = Substitute.For<IFile>();
+            AppVeyorConfiguration.Exists.Returns(false);
+            FileSystem.GetFile(Arg.Is<FilePath>(p => p.FullPath == "/Working/appveyor.yml")).Returns(AppVeyorConfiguration);
         }
 
         public InstallCommand CreateCommand()
         {
             return new InstallCommand(Runtime, FileSystem, Environment,
-                Log, PackageConfigurationCreator, ScriptCopier,
+                Log, PackageConfigurationCreator, FileCopier,
                 Downloader, GitIgnorePatcher);
         }
     }

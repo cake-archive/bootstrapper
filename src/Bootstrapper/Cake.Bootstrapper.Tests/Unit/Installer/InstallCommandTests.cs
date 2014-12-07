@@ -132,7 +132,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 command.Execute();
 
                 // Then                
-                fixture.ScriptCopier.Received(1).Copy("build.ps1");
+                fixture.FileCopier.Received(1).Copy("build.ps1");
             }
 
             [Fact]
@@ -147,7 +147,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 command.Execute();
 
                 // Then                
-                fixture.ScriptCopier.Received(0).Copy("build.ps1");
+                fixture.FileCopier.Received(0).Copy("build.ps1");
             }
 
             [Fact]
@@ -162,7 +162,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 command.Execute();
 
                 // Then                
-                fixture.ScriptCopier.Received(1).Copy("build.cake");
+                fixture.FileCopier.Received(1).Copy("build.cake");
             }
 
             [Fact]
@@ -177,7 +177,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 command.Execute();
 
                 // Then                
-                fixture.ScriptCopier.Received(0).Copy("build.cake");
+                fixture.FileCopier.Received(0).Copy("build.cake");
             }
 
             [Fact]
@@ -210,6 +210,54 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // Then                
                 fixture.GitIgnorePatcher.Received(0).Patch(
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
+            }
+
+            [Fact]
+            public void Should_Copy_AppVeyor_Configuration_Script_If_Flag_Is_Set()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.AppVeyorConfiguration.Exists.Returns(false);
+                var command = fixture.CreateCommand();
+                command.AppVeyor = true;
+
+                // When
+                command.Execute();
+
+                // Then                
+                fixture.FileCopier.Received(1).Copy("appveyor.yml");
+            }
+
+            [Fact]
+            public void Should_Not_Copy_AppVeyor_Configuration_Script_If_Flag_Is_Not_Set()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.AppVeyorConfiguration.Exists.Returns(false);
+                var command = fixture.CreateCommand();
+                command.AppVeyor = false;
+
+                // When
+                command.Execute();
+
+                // Then                
+                fixture.FileCopier.Received(0).Copy("appveyor.yml");
+            }
+
+            [Fact]
+            public void Should_Not_Copy_AppVeyor_Configuration_If_It_Already_Exist_On_Disc()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.AppVeyorConfiguration.Exists.Returns(true);
+                var command = fixture.CreateCommand();
+                command.AppVeyor = true;
+
+                // When
+                command.Execute();
+
+                // Then                
+                fixture.FileCopier.Received(0).Copy("appveyor.yml");
             }
         }
     }

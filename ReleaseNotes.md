@@ -1,5 +1,6 @@
 ### New in 0.0.4 (Released xxxx/xx/xx)
 * Added patching of .gitignore.
+* Added AppVeyor configuration file.
 
 ### New in 0.0.3 (Released 2014/11/29)
 * Added default build script template functionality.

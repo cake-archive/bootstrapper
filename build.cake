@@ -102,6 +102,9 @@ Task("Copy-Files")
     // Copy scripts.
     CopyFileToDirectory("./res/scripts/build.cake", buildBinDirectory);
     CopyFileToDirectory("./res/scripts/build.ps1", buildBinDirectory);
+
+    // Copy AppVeyor configuration.
+    CopyFileToDirectory("./res/appveyor.yml", buildBinDirectory);
 });
 
 Task("Set-Module-Manifest-Version")
