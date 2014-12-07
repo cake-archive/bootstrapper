@@ -63,8 +63,8 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="CakeCmdlet.cs" />
-    <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="Installer\GitIgnore\GitIgnorePatcher.cs" />
+    <Compile Include="Installer\GitIgnore\IGitIgnorePatcher.cs" />
     <Compile Include="Installer\InstallCommand.cs" />
     <Compile Include="Diagnostics\PowerShellLog.cs" />
     <Compile Include="ICommand.cs" />

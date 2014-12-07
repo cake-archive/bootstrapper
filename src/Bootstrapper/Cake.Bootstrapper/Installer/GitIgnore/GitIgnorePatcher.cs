@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Cake.Bootstrapper.Extensions;
-using Cake.Core;
 using Cake.Core.IO;
 
 namespace Cake.Bootstrapper.Installer.GitIgnore
@@ -13,14 +9,12 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
     internal sealed class GitIgnorePatcher : IGitIgnorePatcher
     {
         private readonly IFileSystem _fileSystem;
-        private readonly ICakeEnvironment _environment;
 
         private readonly string[] _content = { "#Cake (generated)", "[Tt]ools/[Cc]ake/" };
 
-        public GitIgnorePatcher(IFileSystem fileSystem, ICakeEnvironment environment)
+        public GitIgnorePatcher(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
-            _environment = environment;
         }
 
         public void Patch(FilePath path)
@@ -82,10 +76,5 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
             }
             return lines.Take(end + 1).ToList();            
         }
-    }
-
-    public interface IGitIgnorePatcher
-    {
-        void Patch(FilePath path);
     }
 }

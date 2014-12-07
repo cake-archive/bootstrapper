@@ -4,7 +4,6 @@ using Cake.Bootstrapper.Installer;
 using Cake.Bootstrapper.Installer.GitIgnore;
 using Cake.Bootstrapper.Installer.NuGet;
 using Cake.Bootstrapper.Installer.Scripts;
-using Cake.Bootstrapper.Net;
 
 namespace Cake.Bootstrapper
 {
