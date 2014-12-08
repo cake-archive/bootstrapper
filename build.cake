@@ -12,11 +12,15 @@ var configuration = Argument<string>("configuration", "Release");
 var releaseNotes = ParseReleaseNotes("./ReleaseNotes.md");
 var version = releaseNotes.Version.ToString();
 
+var isLocalBuild = !IsAppVeyorBuild();
+var buildNumber = GetBuildNumber();
+var semVersion = isLocalBuild ? version : (version + string.Concat("-build-", buildNumber));
+
 //////////////////////////////////////////////////////////////////////
 // DIRECTORIES
 //////////////////////////////////////////////////////////////////////
 
-var buildDirectory = "./build/v" + version;
+var buildDirectory = "./build/v" + semVersion;
 var buildBinDirectory = buildDirectory + "/bin";
 var testResultDirectory = buildDirectory + "/test-results";
 var buildInstallerDirectory = buildDirectory + "/installer";
@@ -36,7 +40,7 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectories(new[] { buildDirectory, buildBinDirectory,
-    	buildInstallerDirectory, buildCandleDirectory, testResultDirectory,
+        buildInstallerDirectory, buildCandleDirectory, testResultDirectory,
         chocolateyRoot, chocolateyToolsDirectory, outputDirectory });
 });
 
@@ -50,7 +54,7 @@ Task("Update-Versions")
         Product = "Cake",
         Version = version,
         FileVersion = version,
-        InformationalVersion = version,
+        InformationalVersion = semVersion,
         Copyright = "Copyright (c) Patrik Svensson 2014"
     });
 }); 
@@ -129,14 +133,14 @@ Task("Build-Installer")
         Extensions = new List<string> { "WixUtilExtension" },
         Defines = new Dictionary<string, string> {
             { "BinDir", buildBinDirectory },
-            { "BuildVersion", "1.0.0" }
+            { "BuildVersion", version }
         }
     });
 
     // Invoke Light (WiX linker).
     var objFiles = GetFiles(buildCandleDirectory + "/*.wixobj");
     WiXLight(objFiles, new LightSettings {
-        OutputFile = buildInstallerDirectory + "/Cake-Bootstrapper-v" + version + ".msi",
+        OutputFile = buildInstallerDirectory + "/Cake-Bootstrapper-v" + semVersion + ".msi",
         Extensions = new List<string> { "WixUIExtension", "WixUtilExtension", "WixNetFxExtension" }
     });
 });
@@ -146,14 +150,14 @@ Task("Build-Chocolatey")
     .Does(() =>
 {
     // Create chocolateyInstall.ps1 in chocolatey tools output.
-    var url = "https://github.com/cake-build/bootstrapper/releases/download/v" + version + "/Cake-Bootstrapper-v" + version + ".msi";
+    var url = "https://github.com/cake-build/bootstrapper/releases/download/v" + semVersion + "/Cake-Bootstrapper-v" + semVersion + ".msi";
     string text = File.ReadAllText("./src/Chocolatey/tools/chocolateyInstall.ps1");
     text = text.Replace("%DOWNLOAD_URL%", url);
     File.WriteAllText(chocolateyToolsDirectory + "/chocolateyInstall.ps1", text);
 
     // Create the nuget package.
     NuGetPack("./src/Chocolatey/Cake.Bootstrapper.nuspec", new NuGetPackSettings {
-        Version = version,
+        Version = semVersion,
         ReleaseNotes = releaseNotes.Notes.ToArray(),
         BasePath = chocolateyRoot,
         OutputDirectory = chocolateyRoot,
@@ -161,8 +165,61 @@ Task("Build-Chocolatey")
     });
 });
 
+Task("Publish-To-MyGet")
+    .WithCriteria(() => IsAppVeyorBuild())
+    .IsDependentOn("Build-Chocolatey")
+    .Does(() =>
+{
+    // Resolve the API key.
+    var apiKey = EnvironmentVariable("MYGET_API_KEY");
+    if(string.IsNullOrEmpty(apiKey)) {
+        throw new InvalidOperationException("Could not resolve MyGet API key.");
+    }
+
+    // Get the path to the package.
+    var package = chocolateyRoot + "/cake-bootstrapper." + semVersion + ".nupkg";
+
+    // Push the package.
+    NuGetPush(package, new NuGetPushSettings {
+        Source = "https://www.myget.org/F/cake-bootstrapper/api/v2/package",
+        ApiKey = apiKey
+    });    
+});
+
+//////////////////////////////////////////////////////////////////////
+// TASK TARGETS
+//////////////////////////////////////////////////////////////////////
+
 Task("Default")
     .IsDependentOn("Build-Chocolatey");
+
+Task("AppVeyor")
+    .WithCriteria(() => IsAppVeyorBuild())
+    .IsDependentOn("Publish-To-MyGet");
+
+//////////////////////////////////////////////////////////////////////
+// UTILITY METHODS
+//////////////////////////////////////////////////////////////////////
+
+public bool IsAppVeyorBuild()
+{
+    return GetContext().Environment.GetEnvironmentVariable("APPVEYOR") != null;
+}
+
+public int GetBuildNumber()
+{   
+    var context = GetContext();
+    var value = context.Environment.GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER");
+    if(value != null)
+    {
+        int version = 0;
+        if(int.TryParse(value, out version))
+        {           
+            return version;
+        }
+    }   
+    return 0;   
+}
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
