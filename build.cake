@@ -186,6 +186,23 @@ Task("Publish-To-MyGet")
     });    
 });
 
+Task("Set-AppVeyor-Build-Version")
+    .WithCriteria(() => IsAppVeyorBuild())
+    .Does(() =>
+{
+    StartProcess("appveyor", new ProcessSettings {
+        Arguments = string.Concat("UpdateBuild -Version \"", semVersion, "\"")
+    });
+});
+
+Task("Upload-AppVeyor-Artifact")
+    .IsDependentOn("Build-Installer")
+    .WithCriteria(() => IsAppVeyorBuild())
+    .Does(() =>
+{
+    UploadArtifact(buildInstallerDirectory + "/Cake-Bootstrapper-v" + semVersion + ".msi");
+});
+
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
@@ -195,7 +212,9 @@ Task("Default")
 
 Task("AppVeyor")
     .WithCriteria(() => IsAppVeyorBuild())
-    .IsDependentOn("Publish-To-MyGet");
+    .IsDependentOn("Publish-To-MyGet")
+    .IsDependentOn("Set-AppVeyor-Build-Version")
+    .IsDependentOn("Upload-AppVeyor-Artifact");
 
 //////////////////////////////////////////////////////////////////////
 // UTILITY METHODS
@@ -208,17 +227,32 @@ public bool IsAppVeyorBuild()
 
 public int GetBuildNumber()
 {   
-    var context = GetContext();
-    var value = context.Environment.GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER");
-    if(value != null)
+    if(IsAppVeyorBuild())
     {
-        int version = 0;
-        if(int.TryParse(value, out version))
-        {           
-            return version;
+        var context = GetContext();
+        var value = context.Environment.GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER");
+        if(value != null)
+        {
+            int version;
+            if(int.TryParse(value, out version))
+            {           
+                return version;
+            }
         }
     }   
     return 0;   
+}
+
+public void UploadArtifact(FilePath path)
+{
+    if(IsAppVeyorBuild())
+    {
+        var fileName = path.GetFilename().FullPath;
+        StartProcess("appveyor", new ProcessSettings {
+            Arguments = string.Concat("PushArtifact -Path \"", path.FullPath, 
+                "\" -FileName \"", fileName , "\"")
+        });
+    }    
 }
 
 //////////////////////////////////////////////////////////////////////
