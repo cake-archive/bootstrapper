@@ -19,6 +19,10 @@ pushd
 cd $TOOLS_DIR
 iex "$NUGET_EXE install -ExcludeVersion"
 popd
+if ($LASTEXITCODE -ne 0)
+{
+    exit $LASTEXITCODE
+}
 # Make sure that Cake has been installed.
 if (!(Test-Path $CAKE_EXE)) {
     Throw "Could not find Cake.exe"
@@ -26,3 +30,4 @@ if (!(Test-Path $CAKE_EXE)) {
 
 # Start Cake
 iex "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
+exit $LASTEXITCODE
