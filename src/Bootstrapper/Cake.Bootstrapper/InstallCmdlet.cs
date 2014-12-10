@@ -16,6 +16,9 @@ namespace Cake.Bootstrapper
         [Parameter]
         public SwitchParameter AppVeyor { get; set; }
 
+        [Parameter]
+        public SwitchParameter GitIgnore { get; set; }
+
         public override void RegisterDependencies(ContainerBuilder builder)
         {
             builder.RegisterType<NuGetPackageConfigurationCreator>()
@@ -43,6 +46,12 @@ namespace Cake.Bootstrapper
             if (AppVeyor.IsPresent)
             {
                 command.AppVeyor = true;
+            }
+
+            // GitIgnore
+            if (GitIgnore.IsPresent)
+            {
+                command.GitIgnore = true;
             }
         }
     }

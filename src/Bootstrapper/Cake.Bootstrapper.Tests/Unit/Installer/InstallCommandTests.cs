@@ -182,18 +182,36 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
             }
 
             [Fact]
-            public void Should_Patch_GitIgnore()
+            public void Should_Patch_GitIgnore_If_Flag_Is_Set()
             {
                 // Given
                 var fixture = new InstallCommandFixture();
                 fixture.GitIgnore.Exists.Returns(true);
                 var command = fixture.CreateCommand();
+                command.GitIgnore = true;
 
                 // When
                 command.Execute();
 
                 // Then                
                 fixture.GitIgnorePatcher.Received(1).Patch(
+                    Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
+            }
+
+            [Fact]
+            public void Should_Not_Patch_GitIgnore_If_Flag_Is_Not_Set()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.GitIgnore.Exists.Returns(true);
+                var command = fixture.CreateCommand();
+                command.GitIgnore = false;
+
+                // When
+                command.Execute();
+
+                // Then                
+                fixture.GitIgnorePatcher.Received(0).Patch(
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
             }
 
@@ -205,6 +223,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 fixture.GitIgnore.Exists.Returns(true);
                 fixture.GitIgnorePatcher.Patch(Arg.Any<FilePath>()).Returns(true);
                 var command = fixture.CreateCommand();
+                command.GitIgnore = true;
 
                 // When
                 command.Execute();
@@ -221,6 +240,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 var fixture = new InstallCommandFixture();
                 fixture.GitIgnore.Exists.Returns(false);
                 var command = fixture.CreateCommand();
+                command.GitIgnore = true;
 
                 // When
                 command.Execute();

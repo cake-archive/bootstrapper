@@ -23,6 +23,7 @@ namespace Cake.Bootstrapper.Installer
 
         public string Source { get; set; }
         public bool AppVeyor { get; set; }
+        public bool GitIgnore { get; set; }
 
         public InstallCommand(IRuntime runtime, IFileSystem fileSystem, ICakeEnvironment environment,
             ICakeLog log, INuGetPackageConfigurationCreator packageConfigCreator,
@@ -101,15 +102,18 @@ namespace Cake.Bootstrapper.Installer
             }
 
             // Patch .gitignore file.
-            ReportProgress("Patching .gitignore...", 100);
-            var gitIgnorePath = new FilePath(".gitignore").MakeAbsolute(_environment);
-            if (_fileSystem.Exist(gitIgnorePath))
+            if (GitIgnore)
             {
-                if (_gitIgnorePatcher.Patch(gitIgnorePath))
+                ReportProgress("Patching .gitignore...", 100);
+                var gitIgnorePath = new FilePath(".gitignore").MakeAbsolute(_environment);
+                if (_fileSystem.Exist(gitIgnorePath))
                 {
-                    _log.Information(" -> Patched .gitignore.");   
-                }                
-            }            
+                    if (_gitIgnorePatcher.Patch(gitIgnorePath))
+                    {
+                        _log.Information(" -> Patched .gitignore.");
+                    }
+                }
+            }
         }
 
         private void ReportProgress(string description, int percentage)

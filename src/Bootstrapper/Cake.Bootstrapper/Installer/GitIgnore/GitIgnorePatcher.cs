@@ -10,7 +10,7 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
     {
         private readonly IFileSystem _fileSystem;
 
-        private readonly string[] _content = { "#Cake (generated)", "[Tt]ools/[Cc]ake/" };
+        private readonly string[] _content = { "[Tt]ools/[Cc]ake/" };
 
         public GitIgnorePatcher(IFileSystem fileSystem)
         {
@@ -35,6 +35,7 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
 
             // Add the content we want to add the end of the file.
             lines.Add(string.Empty);
+            lines.Add("#Cake (generated)");
             foreach (var line in _content)
             {
                 lines.Add(line);
