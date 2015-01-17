@@ -8,6 +8,12 @@ Param(
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $CAKE_EXE = Join-Path $TOOLS_DIR "Cake/Cake.exe"
+$PACKAGES_CONFIG = Join-Path $TOOLS_DIR "packages.config"
+
+# Make sure tools folder exists
+if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
+    New-Item -path $TOOLS_DIR -name logfiles -itemtype directory
+}
 
 # Try find NuGet.exe in path if not exists
 if (!(Test-Path $NUGET_EXE)) {
@@ -21,7 +27,7 @@ if (!(Test-Path $NUGET_EXE)) {
 
 # Try download NuGet.exe if not exists
 if (!(Test-Path $NUGET_EXE)) {
-	Invoke-WebRequest -Uri http://nuget.org/nuget.exe -OutFile $NUGET_EXE
+    Invoke-WebRequest -Uri http://nuget.org/nuget.exe -OutFile $NUGET_EXE
 }
 
 # Make sure NuGet exists where we expect it.
@@ -35,7 +41,17 @@ $ENV:NUGET_EXE = $NUGET_EXE
 # Restore tools from NuGet.
 Push-Location
 Set-Location $TOOLS_DIR
-Invoke-Expression "$NUGET_EXE install -ExcludeVersion"
+
+# Restore packages
+if (Test-Path $PACKAGES_CONFIG)
+{
+    Invoke-Expression "$NUGET_EXE install -ExcludeVersion"
+}
+# Install just Cake if missing config
+else
+{
+    Invoke-Expression "$NUGET_EXE install Cake -ExcludeVersion"
+}
 Pop-Location
 if ($LASTEXITCODE -ne 0)
 {
@@ -50,3 +66,5 @@ if (!(Test-Path $CAKE_EXE)) {
 # Start Cake
 Invoke-Expression "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
 exit $LASTEXITCODE
+
+
