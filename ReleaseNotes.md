@@ -1,3 +1,10 @@
+### New in 0.0.5 (Released 2015/01/17)
+* Added support for missing tools and package.config.
+* Bootstrapper script will now download Nuget if it doesn't exist.
+* Changed appveyor.yml to launch build.ps1 via PowerShell native.
+* Made .gitignore patching optional.
+* Replace Start-Process with Invoke-Command in bootstrapper script.
+
 ### New in 0.0.4 (Released 2014/12/10)
 * Added patching of .gitignore.
 * Added AppVeyor configuration file.
