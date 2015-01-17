@@ -6,14 +6,17 @@ var target = Argument<string>("target", "Default");
 var configuration = Argument<string>("configuration", "Release");
 
 //////////////////////////////////////////////////////////////////////
-// VERSION
+// PREPARATION
 //////////////////////////////////////////////////////////////////////
 
 var releaseNotes = ParseReleaseNotes("./ReleaseNotes.md");
 var version = releaseNotes.Version.ToString();
 
-var isLocalBuild = !IsAppVeyorBuild();
-var buildNumber = GetBuildNumber();
+var isRunningOnAppVeyor = AppVeyor.IsRunningOnAppVeyor;
+var isLocalBuild = !isRunningOnAppVeyor;
+var isPullRequest = AppVeyor.Environment.PullRequest.IsPullRequest;
+
+var buildNumber = AppVeyor.Environment.Build.Number;
 var semVersion = isLocalBuild ? version : (version + string.Concat("-build-", buildNumber));
 
 //////////////////////////////////////////////////////////////////////
@@ -166,7 +169,8 @@ Task("Build-Chocolatey")
 });
 
 Task("Publish-To-MyGet")
-    .WithCriteria(() => IsAppVeyorBuild())
+    .WithCriteria(() => isRunningOnAppVeyor)
+    .WithCriteria(() => !isPullRequest)
     .IsDependentOn("Build-Chocolatey")
     .Does(() =>
 {
@@ -187,7 +191,7 @@ Task("Publish-To-MyGet")
 });
 
 Task("Set-AppVeyor-Build-Version")
-    .WithCriteria(() => IsAppVeyorBuild())
+    .WithCriteria(() => isRunningOnAppVeyor)
     .Does(() =>
 {
     StartProcess("appveyor", new ProcessSettings {
@@ -197,10 +201,12 @@ Task("Set-AppVeyor-Build-Version")
 
 Task("Upload-AppVeyor-Artifact")
     .IsDependentOn("Build-Installer")
-    .WithCriteria(() => IsAppVeyorBuild())
+    .WithCriteria(() => isRunningOnAppVeyor)
     .Does(() =>
 {
-    UploadArtifact(buildInstallerDirectory + "/Cake-Bootstrapper-v" + semVersion + ".msi");
+	var artifact = new FilePath(buildInstallerDirectory + "/Cake-Bootstrapper-v" + semVersion + ".msi");
+    Information("Uploading AppVeyor artifact {0}...", artifact.GetFilename());
+    AppVeyor.UploadArtifact(artifact);
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -211,49 +217,10 @@ Task("Default")
     .IsDependentOn("Build-Chocolatey");
 
 Task("AppVeyor")
-    .WithCriteria(() => IsAppVeyorBuild())
+    .WithCriteria(() => isRunningOnAppVeyor)
     .IsDependentOn("Publish-To-MyGet")
     .IsDependentOn("Set-AppVeyor-Build-Version")
     .IsDependentOn("Upload-AppVeyor-Artifact");
-
-//////////////////////////////////////////////////////////////////////
-// UTILITY METHODS
-//////////////////////////////////////////////////////////////////////
-
-public bool IsAppVeyorBuild()
-{
-    return GetContext().Environment.GetEnvironmentVariable("APPVEYOR") != null;
-}
-
-public int GetBuildNumber()
-{   
-    if(IsAppVeyorBuild())
-    {
-        var context = GetContext();
-        var value = context.Environment.GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER");
-        if(value != null)
-        {
-            int version;
-            if(int.TryParse(value, out version))
-            {           
-                return version;
-            }
-        }
-    }   
-    return 0;   
-}
-
-public void UploadArtifact(FilePath path)
-{
-    if(IsAppVeyorBuild())
-    {
-        var fileName = path.GetFilename().FullPath;
-        StartProcess("appveyor", new ProcessSettings {
-            Arguments = string.Concat("PushArtifact -Path \"", path.FullPath, 
-                "\" -FileName \"", fileName , "\"")
-        });
-    }    
-}
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
