@@ -19,7 +19,7 @@ if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
 if (!(Test-Path $NUGET_EXE)) {
     "Trying to find nuget.exe in path"
     $NUGET_EXE_IN_PATH = &where.exe nuget.exe
-    if ((Test-Path $NUGET_EXE_IN_PATH)) {
+    if ($NUGET_EXE_IN_PATH -ne $null -and (Test-Path $NUGET_EXE_IN_PATH)) {
         "Found $($NUGET_EXE_IN_PATH)"
         $NUGET_EXE = $NUGET_EXE_IN_PATH 
     }
@@ -45,12 +45,12 @@ Set-Location $TOOLS_DIR
 # Restore packages
 if (Test-Path $PACKAGES_CONFIG)
 {
-    Invoke-Expression "$NUGET_EXE install -ExcludeVersion"
+    Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion"
 }
 # Install just Cake if missing config
 else
 {
-    Invoke-Expression "$NUGET_EXE install Cake -ExcludeVersion"
+    Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion"
 }
 Pop-Location
 if ($LASTEXITCODE -ne 0)
@@ -64,7 +64,7 @@ if (!(Test-Path $CAKE_EXE)) {
 }
 
 # Start Cake
-Invoke-Expression "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
+Invoke-Expression "&`"$CAKE_EXE`" `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
 exit $LASTEXITCODE
 
 
