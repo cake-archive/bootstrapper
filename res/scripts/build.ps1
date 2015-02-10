@@ -45,12 +45,12 @@ Set-Location $TOOLS_DIR
 # Restore packages
 if (Test-Path $PACKAGES_CONFIG)
 {
-    Invoke-Expression "$NUGET_EXE install -ExcludeVersion"
+    Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion"
 }
 # Install just Cake if missing config
 else
 {
-    Invoke-Expression "$NUGET_EXE install Cake -ExcludeVersion"
+    Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion"
 }
 Pop-Location
 if ($LASTEXITCODE -ne 0)
@@ -64,7 +64,7 @@ if (!(Test-Path $CAKE_EXE)) {
 }
 
 # Start Cake
-Invoke-Expression "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
+Invoke-Expression "&`"$CAKE_EXE`" `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
 exit $LASTEXITCODE
 
 
