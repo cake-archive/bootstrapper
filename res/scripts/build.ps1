@@ -19,7 +19,7 @@ if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
 if (!(Test-Path $NUGET_EXE)) {
     "Trying to find nuget.exe in path"
     $NUGET_EXE_IN_PATH = &where.exe nuget.exe
-    if ((Test-Path $NUGET_EXE_IN_PATH)) {
+    if ($NUGET_EXE_IN_PATH -ne $null -and (Test-Path $NUGET_EXE_IN_PATH)) {
         "Found $($NUGET_EXE_IN_PATH)"
         $NUGET_EXE = $NUGET_EXE_IN_PATH 
     }
