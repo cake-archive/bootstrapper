@@ -105,7 +105,8 @@ Task("Copy-Files")
         "./res/cake.ico",
 
         // Scripts
-        "./res/scripts/build.cake",
+        "./res/scripts/build-convention.cake",
+        "./res/scripts/build-empty.cake",
         "./res/scripts/build.ps1",
 
         // AppVeyor configuration

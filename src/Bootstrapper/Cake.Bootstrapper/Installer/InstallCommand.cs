@@ -24,6 +24,7 @@ namespace Cake.Bootstrapper.Installer
         public string Source { get; set; }
         public bool AppVeyor { get; set; }
         public bool GitIgnore { get; set; }
+        public bool Empty { get; set; }
 
         public InstallCommand(IRuntime runtime, IFileSystem fileSystem, ICakeEnvironment environment,
             ICakeLog log, INuGetPackageConfigurationCreator packageConfigCreator,
@@ -44,7 +45,7 @@ namespace Cake.Bootstrapper.Installer
 
         public void Execute()
         {
-            // Create tools directory.            
+            // Create tools directory.
             ReportProgress("Creating tools directory...", 0);
             var toolsPath = new DirectoryPath("./tools").MakeAbsolute(_environment);
             var toolsDirectory = _fileSystem.GetDirectory(toolsPath);
@@ -76,7 +77,7 @@ namespace Cake.Bootstrapper.Installer
             var bootstrapperPath = new FilePath("build.ps1").MakeAbsolute(_environment);
             if (!_fileSystem.Exist(bootstrapperPath))
             {
-                _fileCopier.Copy("build.ps1");
+                _fileCopier.CopyBootstrapperScript();
                 _log.Information(" -> Copied bootstrapper script.");
             }
 
@@ -85,8 +86,16 @@ namespace Cake.Bootstrapper.Installer
             var buildScriptPath = new FilePath("build.cake").MakeAbsolute(_environment);
             if (!_fileSystem.Exist(buildScriptPath))
             {
-                _fileCopier.Copy("build.cake");
-                _log.Information(" -> Copied build script.");
+                if (Empty)
+                {
+                    _fileCopier.CopyEmptyCakeScript();
+                    _log.Information(" -> Copied empty build script.");
+                }
+                else
+                {
+                    _fileCopier.CopyConventionBasedCakeScript();
+                    _log.Information(" -> Copied build script.");
+                }
             }
 
             // Copy appveyor file.
@@ -96,7 +105,7 @@ namespace Cake.Bootstrapper.Installer
                 var appVeyorPath = new FilePath("appveyor.yml").MakeAbsolute(_environment);
                 if (!_fileSystem.Exist(appVeyorPath))
                 {
-                    _fileCopier.Copy("appveyor.yml");
+                    _fileCopier.CopyAppVeyorConfiguration();
                     _log.Information(" -> Copied AppVeyor configuration file.");
                 }
             }
@@ -114,6 +123,8 @@ namespace Cake.Bootstrapper.Installer
                     }
                 }
             }
+
+            ReportProgress("Done!", 100);
         }
 
         private void ReportProgress(string description, int percentage)

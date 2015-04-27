@@ -18,7 +18,27 @@ namespace Cake.Bootstrapper.Installer.Resources
             _log = log;
         }
 
-        public bool Copy(string scriptName)
+        public bool CopyConventionBasedCakeScript()
+        {
+            return Copy("build-convention.cake", "build.cake");
+        }
+
+        public bool CopyEmptyCakeScript()
+        {
+            return Copy("build-empty.cake", "build.cake");
+        }
+
+        public bool CopyAppVeyorConfiguration()
+        {
+            return Copy("appveyor.yml", "appveyor.yml");
+        }
+
+        public bool CopyBootstrapperScript()
+        {
+            return Copy("build.ps1", "build.ps1");
+        }
+
+        private bool Copy(string scriptName, string destinationScriptName)
         {
             var applicationRoot = _environment.GetApplicationRoot();
 
@@ -27,11 +47,11 @@ namespace Cake.Bootstrapper.Installer.Resources
             var sourceFile = _fileSystem.GetFile(sourcePath);
 
             // Get the destination file.
-            var destinationPath = new FilePath(scriptName).MakeAbsolute(_environment);
+            var destinationPath = new FilePath(destinationScriptName).MakeAbsolute(_environment);
             var destinationFile = _fileSystem.GetFile(destinationPath);
 
             // Copy the script.
-            return Copy(sourceFile, destinationFile);            
+            return Copy(sourceFile, destinationFile);
         }
 
         private bool Copy(IFile source, IFile destination)

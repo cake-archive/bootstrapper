@@ -37,7 +37,7 @@ namespace Cake.Bootstrapper
         public abstract void SetCommandParameters(TCommand command);
 
         public virtual void RegisterDependencies(ContainerBuilder builder)
-        {            
+        {
         }
 
         private IContainer BuildContainer()
@@ -48,7 +48,7 @@ namespace Cake.Bootstrapper
             builder.RegisterInstance(this).As<Cmdlet>().As<PSCmdlet>().SingleInstance();
             builder.RegisterType<PowerShellRuntime>().As<IRuntime>().SingleInstance();
             builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
-            builder.RegisterType<CakeEnvironment>().As<ICakeEnvironment>().SingleInstance();            
+            builder.RegisterType<CakeEnvironment>().As<ICakeEnvironment>().SingleInstance();
             builder.RegisterType<PowerShellLog>().As<ICakeLog>().SingleInstance();
             builder.RegisterType<PowerShellSessionState>().As<ISessionState>();
             builder.RegisterType<HttpDownloader>().As<IHttpDownloader>().SingleInstance();

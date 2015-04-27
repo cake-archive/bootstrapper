@@ -40,7 +40,8 @@
                         <File Name="Autofac.dll" Source="$(var.BinDir)\Autofac.dll"/>
                         <File Name="NuGet.Core.dll" Source="$(var.BinDir)\NuGet.Core.dll"/>                                               
                         <!-- Copy scripts -->
-                        <File Name="build.cake" Source="$(var.BinDir)\build.cake"/>
+                        <File Name="build-convention.cake" Source="$(var.BinDir)\build-convention.cake"/>
+                        <File Name="build-empty.cake" Source="$(var.BinDir)\build-empty.cake"/>
                         <File Name="build.ps1" Source="$(var.BinDir)\build.ps1"/>
                         <!-- AppVeyor configuration -->
                         <File Name="appveyor.yml" Source="$(var.BinDir)\appveyor.yml"/>

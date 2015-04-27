@@ -36,7 +36,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.ToolsDirectory.Received(1).Create();
             }
 
@@ -51,7 +51,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.ToolsDirectory.Received(0).Create();
             }
 
@@ -66,7 +66,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.Downloader.Received(1).Download(
                     Arg.Is<Uri>(p => p == new Uri("http://nuget.org/nuget.exe")),
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/tools/nuget.exe"));
@@ -83,7 +83,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.Downloader.Received(0).Download(
                     Arg.Is<Uri>(p => p == new Uri("http://nuget.org/nuget.exe")),
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/tools/nuget.exe"));
@@ -100,7 +100,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.PackageConfigurationCreator.Received(1).Generate(
                     Arg.Is<DirectoryPath>(p => p.FullPath == "/Working/tools"));
             }
@@ -116,7 +116,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.PackageConfigurationCreator.Received(0).Generate(
                     Arg.Is<DirectoryPath>(p => p.FullPath == "/Working/tools"));
             }
@@ -132,8 +132,8 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(1).Copy("build.ps1");
+                // Then
+                fixture.FileCopier.Received(1).CopyBootstrapperScript();
             }
 
             [Fact]
@@ -147,38 +147,72 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(0).Copy("build.ps1");
+                // Then
+                fixture.FileCopier.Received(0).CopyBootstrapperScript();
             }
 
             [Fact]
-            public void Should_Copy_Build_Script()
+            public void Should_Copy_Convention_Based_Build_Script_If_Empty_Not_Set()
             {
                 // Given
                 var fixture = new InstallCommandFixture();
                 fixture.BuildScript.Exists.Returns(false);
                 var command = fixture.CreateCommand();
+                command.Empty = false;
 
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(1).Copy("build.cake");
+                // Then
+                fixture.FileCopier.Received(1).CopyConventionBasedCakeScript();
             }
 
             [Fact]
-            public void Should_Not_Copy_Build_Script_If_It_Already_Exist_On_Disc()
+            public void Should_Not_Copy_Build_Script_If_It_Already_Exist_On_Disc_And_Empty_Not_Set()
             {
                 // Given
                 var fixture = new InstallCommandFixture();
                 fixture.BuildScript.Exists.Returns(true);
                 var command = fixture.CreateCommand();
+                command.Empty = false;
 
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(0).Copy("build.cake");
+                // Then
+                fixture.FileCopier.Received(0).CopyConventionBasedCakeScript();
+            }
+
+            [Fact]
+            public void Should_Copy_Empty_Build_Script_If_Empty_Is_Set()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.BuildScript.Exists.Returns(false);
+                var command = fixture.CreateCommand();
+                command.Empty = true;
+
+                // When
+                command.Execute();
+
+                // Then
+                fixture.FileCopier.Received(1).CopyEmptyCakeScript();
+            }
+
+            [Fact]
+            public void Should_Not_Copy_Build_Script_If_It_Already_Exist_On_Disc_And_Empty_Is_Set()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.BuildScript.Exists.Returns(true);
+                var command = fixture.CreateCommand();
+                command.Empty = true;
+
+                // When
+                command.Execute();
+
+                // Then
+                fixture.FileCopier.Received(0).CopyEmptyCakeScript();
             }
 
             [Fact]
@@ -193,7 +227,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.GitIgnorePatcher.Received(1).Patch(
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
             }
@@ -210,7 +244,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.GitIgnorePatcher.Received(0).Patch(
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
             }
@@ -245,7 +279,7 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
+                // Then
                 fixture.GitIgnorePatcher.Received(0).Patch(
                     Arg.Is<FilePath>(p => p.FullPath == "/Working/.gitignore"));
             }
@@ -262,8 +296,8 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(1).Copy("appveyor.yml");
+                // Then
+                fixture.FileCopier.Received(1).CopyAppVeyorConfiguration();
             }
 
             [Fact]
@@ -278,8 +312,8 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(0).Copy("appveyor.yml");
+                // Then
+                fixture.FileCopier.Received(0).CopyAppVeyorConfiguration();
             }
 
             [Fact]
@@ -294,8 +328,8 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
                 // When
                 command.Execute();
 
-                // Then                
-                fixture.FileCopier.Received(0).Copy("appveyor.yml");
+                // Then
+                fixture.FileCopier.Received(0).CopyAppVeyorConfiguration();
             }
         }
     }
