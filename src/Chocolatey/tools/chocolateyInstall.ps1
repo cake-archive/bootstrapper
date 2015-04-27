@@ -1,6 +1,6 @@
 $packageName = 'cake-bootstrapper'
 $installerType = 'msi' 
-$url = '%DOWNLOAD_URL%'
+$url = '<%DOWNLOAD_URL%>'
 $silentArgs = '/quiet'
 $validExitCodes = @(0,3010)
 

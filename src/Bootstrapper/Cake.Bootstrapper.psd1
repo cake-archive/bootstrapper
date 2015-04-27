@@ -3,7 +3,7 @@
     RootModule = '.\Cake.Bootstrapper.dll'
 
     # Version number of this module.
-    ModuleVersion = '%MODULE_VERSION%'
+    ModuleVersion = '<%MODULE_VERSION%>'
 
     # ID used to uniquely identify this module
     GUID = 'E2223D75-FB87-42FC-951B-75654FA7FAD0'
