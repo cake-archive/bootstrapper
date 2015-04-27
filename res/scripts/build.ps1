@@ -2,8 +2,15 @@ Param(
     [string]$Script = "build.cake",
     [string]$Target = "Default",
     [string]$Configuration = "Release",
-    [string]$Verbosity = "Verbose"
+    [string]$Verbosity = "Verbose",
+    [switch]$Nightly
 )
+
+# Define the experimental flag.
+$Experimental = "";
+if($Nightly.IsPresent) {
+    $Experimental = "-experimental"
+}
 
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
@@ -64,7 +71,5 @@ if (!(Test-Path $CAKE_EXE)) {
 }
 
 # Start Cake
-Invoke-Expression "&`"$CAKE_EXE`" `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
+Invoke-Expression "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`" $Experimental"
 exit $LASTEXITCODE
-
-

@@ -2,15 +2,15 @@
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
 
-var target          = Argument<string>("target", "Default");
-var configuration   = Argument<string>("configuration", "Release");
+var target = Argument<string>("target", "Default");
+var configuration = Argument<string>("configuration", "Release");
 
 ///////////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
-var solutions       = GetFiles("./**/*.sln");
-var solutionDirs    = solutions.Select(solution => solution.GetDirectory());
+var solutions = GetFiles("./**/*.sln");
+var solutionPaths = solutions.Select(solution => solution.GetDirectory());
 
 ///////////////////////////////////////////////////////////////////////////////
 // SETUP / TEARDOWN
@@ -36,11 +36,11 @@ Task("Clean")
     .Does(() =>
 {
     // Clean solution directories.
-    foreach(var solutionDir in solutionDirs)
+    foreach(var path in solutionPaths)
     {
-        Information("Cleaning {0}", solutionDir);
-        CleanDirectories(solutionDir + "/**/bin/" + configuration);
-        CleanDirectories(solutionDir + "/**/obj/" + configuration);
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/**/bin/" + configuration);
+        CleanDirectories(path + "/**/obj/" + configuration);
     }
 });
 
@@ -50,7 +50,7 @@ Task("Restore")
     // Restore all NuGet packages.
     foreach(var solution in solutions)
     {
-        Information("Restoring {0}", solution);
+        Information("Restoring {0}...", solution);
         NuGetRestore(solution);
     }
 });
