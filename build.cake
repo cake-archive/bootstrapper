@@ -120,9 +120,9 @@ Task("Set-Module-Manifest-Version")
 {
     // Replace module version.
     var path = buildBinDirectory + "/Cake.Bootstrapper.psd1";
-    string text = File.ReadAllText(path);
+    string text = System.IO.File.ReadAllText(path);
     text = text.Replace("%MODULE_VERSION%", version);
-    File.WriteAllText(path, text);    
+    System.IO.File.WriteAllText(path, text);    
 });
 
 Task("Build-Installer")
@@ -154,9 +154,9 @@ Task("Build-Chocolatey")
 {
     // Create chocolateyInstall.ps1 in chocolatey tools output.
     var url = "https://github.com/cake-build/bootstrapper/releases/download/v" + semVersion + "/Cake-Bootstrapper-v" + semVersion + ".msi";
-    string text = File.ReadAllText("./src/Chocolatey/tools/chocolateyInstall.ps1");
+    string text = System.IO.File.ReadAllText("./src/Chocolatey/tools/chocolateyInstall.ps1");
     text = text.Replace("%DOWNLOAD_URL%", url);
-    File.WriteAllText(chocolateyToolsDirectory + "/chocolateyInstall.ps1", text);
+    System.IO.File.WriteAllText(chocolateyToolsDirectory + "/chocolateyInstall.ps1", text);
 
     // Create the nuget package.
     NuGetPack("./src/Chocolatey/Cake.Bootstrapper.nuspec", new NuGetPackSettings {
