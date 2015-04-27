@@ -25,6 +25,7 @@ namespace Cake.Bootstrapper.Installer
         public bool AppVeyor { get; set; }
         public bool GitIgnore { get; set; }
         public bool Empty { get; set; }
+        public bool InstallNuGet { get; set; }
 
         public InstallCommand(IRuntime runtime, IFileSystem fileSystem, ICakeEnvironment environment,
             ICakeLog log, INuGetPackageConfigurationCreator packageConfigCreator,
@@ -54,17 +55,8 @@ namespace Cake.Bootstrapper.Installer
                 toolsDirectory.Create();
             }
 
-            // Download NuGet.exe.
-            ReportProgress("Downloading NuGet executable...", 25);
-            var nugetFilePath = toolsPath.MakeAbsolute(_environment).CombineWithFilePath("nuget.exe");
-            if (!_fileSystem.Exist(nugetFilePath))
-            {
-                _downloader.Download(new Uri("http://nuget.org/nuget.exe"), nugetFilePath);
-                _log.Information(" -> Downloaded NuGet executable.");
-            }
-
             // Create packages.config.
-            ReportProgress("Generating NuGet package configuration...", 50);
+            ReportProgress("Generating NuGet package configuration...", 25);
             var packagesPath = toolsPath.MakeAbsolute(_environment).CombineWithFilePath("packages.config");
             if (!_fileSystem.Exist(packagesPath))
             {
@@ -73,7 +65,7 @@ namespace Cake.Bootstrapper.Installer
             }
 
             // Copy bootstrapper script.
-            ReportProgress("Copying bootstrapper script...", 75);
+            ReportProgress("Copying bootstrapper script...", 50);
             var bootstrapperPath = new FilePath("build.ps1").MakeAbsolute(_environment);
             if (!_fileSystem.Exist(bootstrapperPath))
             {
@@ -82,7 +74,7 @@ namespace Cake.Bootstrapper.Installer
             }
 
             // Copy build script.
-            ReportProgress("Preparing build script...", 85);
+            ReportProgress("Preparing build script...", 75);
             var buildScriptPath = new FilePath("build.cake").MakeAbsolute(_environment);
             if (!_fileSystem.Exist(buildScriptPath))
             {
@@ -95,6 +87,18 @@ namespace Cake.Bootstrapper.Installer
                 {
                     _fileCopier.CopyConventionBasedCakeScript();
                     _log.Information(" -> Copied build script.");
+                }
+            }
+
+            // Download NuGet.exe.
+            if (InstallNuGet)
+            {
+                ReportProgress("Downloading NuGet executable...", 85);
+                var nugetFilePath = toolsPath.MakeAbsolute(_environment).CombineWithFilePath("nuget.exe");
+                if (!_fileSystem.Exist(nugetFilePath))
+                {
+                    _downloader.Download(new Uri("http://nuget.org/nuget.exe"), nugetFilePath);
+                    _log.Information(" -> Downloaded NuGet executable.");
                 }
             }
 

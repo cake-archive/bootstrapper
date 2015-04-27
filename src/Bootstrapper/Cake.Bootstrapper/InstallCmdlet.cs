@@ -18,6 +18,8 @@ namespace Cake.Bootstrapper
         public SwitchParameter GitIgnore { get; set; }
         [Parameter]
         public SwitchParameter Empty { get; set; }
+        [Parameter]
+        public SwitchParameter InstallNuGet { get; set; }
 
         public override void RegisterDependencies(ContainerBuilder builder)
         {
@@ -59,6 +61,11 @@ namespace Cake.Bootstrapper
             if (Empty.IsPresent)
             {
                 command.Empty = true;
+            }
+            // Download NuGet
+            if (InstallNuGet.IsPresent)
+            {
+                command.InstallNuGet = true;
             }
         }
     }

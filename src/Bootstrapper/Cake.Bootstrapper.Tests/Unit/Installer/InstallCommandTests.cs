@@ -56,12 +56,13 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
             }
 
             [Fact]
-            public void Should_Download_NuGet_Executable()
+            public void Should_Download_NuGet_Executable_If_InstallNuGet_Is_Specified()
             {
                 // Given
                 var fixture = new InstallCommandFixture();
                 fixture.NuGetExecutable.Exists.Returns(false);
                 var command = fixture.CreateCommand();
+                command.InstallNuGet = true;
 
                 // When
                 command.Execute();
@@ -73,12 +74,31 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
             }
 
             [Fact]
-            public void Should_Not_Download_NuGet_Executable_If_It_Already_Exist_On_Disc()
+            public void Should_Not_Download_NuGet_Executable_If_InstallNuGet_Is_Not_Specified()
+            {
+                // Given
+                var fixture = new InstallCommandFixture();
+                fixture.NuGetExecutable.Exists.Returns(false);
+                var command = fixture.CreateCommand();
+                command.InstallNuGet = false;
+
+                // When
+                command.Execute();
+
+                // Then
+                fixture.Downloader.Received(0).Download(
+                    Arg.Is<Uri>(p => p == new Uri("http://nuget.org/nuget.exe")),
+                    Arg.Is<FilePath>(p => p.FullPath == "/Working/tools/nuget.exe"));
+            }
+
+            [Fact]
+            public void Should_Not_Download_NuGet_Executable_If_It_Already_Exist_On_Disc_And_InstallNuGet_Is_Specified()
             {
                 // Given
                 var fixture = new InstallCommandFixture();
                 fixture.NuGetExecutable.Exists.Returns(true);
                 var command = fixture.CreateCommand();
+                command.InstallNuGet = true;
 
                 // When
                 command.Execute();
