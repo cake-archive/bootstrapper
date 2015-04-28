@@ -1,4 +1,4 @@
-### New in 0.0.6
+### New in 0.0.6 (Released 2015/04/28)
 * Added support for nightly build of Roslyn.
 * Added option to install empty cake script.
 * Made NuGet installation optional from bootstrapper.
