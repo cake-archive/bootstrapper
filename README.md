@@ -20,11 +20,11 @@ When everything is installed, close the Powershell window and open a new one to 
 Now, go to the project where you want to setup a new Cake build and write `Install-Cake` (with or without the provided *optional* parameters).
 
 ```dos
-PS C:\MyProject> Install-Cake -AppVeyor -GitIgnore
+PS C:\MyProject> Install-Cake -AppVeyor -GitIgnore -InstallNuGet -Empty
  -> Downloaded NuGet executable.
  -> Generated NuGet package configuration.
  -> Copied bootstrapper script.
- -> Copied build script.
+ -> Copied empty build script.
  -> Copied AppVeyor configuration file.
  -> Patched .gitignore.
 ```
