@@ -13,7 +13,7 @@ var releaseNotes = ParseReleaseNotes("./ReleaseNotes.md");
 var version = releaseNotes.Version.ToString();
 
 var buildNumber = AppVeyor.Environment.Build.Number;
-var buildSuffix = BuildSystem.IsLocalBuild ? "-local" : string.Concat("-build-", buildNumber);
+var buildSuffix = BuildSystem.IsLocalBuild ? "" : string.Concat("-build-", buildNumber);
 var buildVersion = version + buildSuffix;
 
 //////////////////////////////////////////////////////////////////////
