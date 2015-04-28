@@ -21,7 +21,6 @@ namespace Cake.Bootstrapper.Installer
         private readonly IHttpDownloader _downloader;
         private readonly IGitIgnorePatcher _gitIgnorePatcher;
 
-        public string Source { get; set; }
         public bool AppVeyor { get; set; }
         public bool GitIgnore { get; set; }
         public bool Empty { get; set; }
@@ -39,9 +38,6 @@ namespace Cake.Bootstrapper.Installer
             _fileCopier = fileCopier;
             _downloader = downloader;
             _gitIgnorePatcher = gitIgnorePatcher;
-
-            // Set default parameter values.
-            Source = "https://raw.githubusercontent.com/cake-build/bootstrapper/master/res/";
         }
 
         public void Execute()

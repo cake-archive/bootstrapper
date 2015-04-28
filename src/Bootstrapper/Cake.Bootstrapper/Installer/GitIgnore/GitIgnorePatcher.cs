@@ -25,7 +25,7 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
                 return false;
             }
 
-            // Read all lines and remove the Cake related stuff.            
+            // Read all lines and remove the Cake related stuff.
             bool needsPatching;
             var lines = ReadLines(file, out needsPatching);
             if (!needsPatching)
@@ -92,7 +92,7 @@ namespace Cake.Bootstrapper.Installer.GitIgnore
             {
                 end--;
             }
-            return lines.Take(end + 1).ToList();            
+            return lines.Take(end + 1).ToList();
         }
     }
 }

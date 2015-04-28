@@ -11,8 +11,6 @@ namespace Cake.Bootstrapper
     public sealed class InstallCmdlet : CakeCmdlet<InstallCommand>
     {
         [Parameter]
-        public string Source { get; set; }
-        [Parameter]
         public SwitchParameter AppVeyor { get; set; }
         [Parameter]
         public SwitchParameter GitIgnore { get; set; }
@@ -42,11 +40,6 @@ namespace Cake.Bootstrapper
 
         public override void SetCommandParameters(InstallCommand command)
         {
-            // Source
-            if (!string.IsNullOrWhiteSpace(Source))
-            {
-                command.Source = Source;
-            }
             // AppVeyor
             if (AppVeyor.IsPresent)
             {

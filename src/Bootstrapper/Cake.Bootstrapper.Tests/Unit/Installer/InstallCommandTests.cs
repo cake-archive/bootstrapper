@@ -10,19 +10,6 @@ namespace Cake.Bootstrapper.Tests.Unit.Installer
 {
     public sealed class InstallCommandTests
     {
-        public sealed class TheConstructor
-        {
-            [Fact]
-            public void Should_Set_Source_To_Default_Value()
-            {
-                // Given, When
-                var command = new InstallCommand(null, null, null, null, null, null, null, null);
-
-                // Then
-                Assert.Equal("https://raw.githubusercontent.com/cake-build/bootstrapper/master/res/", command.Source);
-            }
-        }
-
         public sealed class TheExecuteMethod
         {
             [Fact]
