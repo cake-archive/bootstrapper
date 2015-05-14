@@ -1,3 +1,30 @@
+<#
+ 
+.SYNOPSIS
+This is a Powershell script to bootstrap a Cake build.
+ 
+.DESCRIPTION
+This Powershell script will download NuGet if missing, restore NuGet tools (including Cake)
+and execute your Cake build script with the parameters you provide.
+
+.PARAMETER Script
+The build script to execute.
+.PARAMETER Target
+The build script target to run.
+.PARAMETER Configuration
+The build configuration to use.
+.PARAMETER Verbosity
+Specifies the amount of information to be displayed.
+.PARAMETER DryRun
+Performs a dry run of the build script.
+No tasks will be executed.
+.PARAMETER Experimental
+Determines whether or not latest Roslyn should be used.
+ 
+.LINK
+http://cakebuild.net
+#>
+
 Param(
     [string]$Script = "build.cake",
     [string]$Target = "Default",
