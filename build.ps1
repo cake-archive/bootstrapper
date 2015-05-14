@@ -2,12 +2,28 @@ Param(
     [string]$Script = "build.cake",
     [string]$Target = "Default",
     [string]$Configuration = "Release",
-    [string]$Verbosity = "Verbose"
+    [ValidateSet("Quiet", "Minimal", "Normal", "Verbose", "Diagnostic")]
+    [string]$Verbosity = "Verbose",
+    [Alias("WhatIf","Noop")]
+    [switch]$DryRun,
+    [switch]$Experimental
 )
 
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $CAKE_EXE = Join-Path $TOOLS_DIR "Cake/Cake.exe"
+
+# Should we use the new Roslyn?
+$UseExperimental = "";
+if($Experimental.IsPresent) {
+    $UseExperimental = "-experimental"
+}
+
+# Is this a dry run?
+$UseDryRun = "";
+if($DryRun.IsPresent) {
+    $UseDryRun = "-dryrun"
+}
 
 # Make sure NuGet exists where we expect it.
 if (!(Test-Path $NUGET_EXE)) {
@@ -38,5 +54,5 @@ if (!(Test-Path $CAKE_EXE)) {
 }
 
 # Start Cake
-Invoke-Expression "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`""
+Invoke-Expression "$CAKE_EXE `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`" $UseDryRun $UseExperimental"
 exit $LASTEXITCODE
