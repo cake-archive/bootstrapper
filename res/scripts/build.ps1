@@ -15,11 +15,11 @@ The build script target to run.
 The build configuration to use.
 .PARAMETER Verbosity
 Specifies the amount of information to be displayed.
-.PARAMETER DryRun
+.PARAMETER WhatIf
 Performs a dry run of the build script.
 No tasks will be executed.
 .PARAMETER Experimental
-Determines whether or not latest Roslyn should be used.
+Tells Cake to use the latest Roslyn release.
  
 .LINK
 http://cakebuild.net
@@ -31,9 +31,9 @@ Param(
     [string]$Configuration = "Release",
     [ValidateSet("Quiet", "Minimal", "Normal", "Verbose", "Diagnostic")]
     [string]$Verbosity = "Verbose",
-    [Alias("WhatIf","Noop")]
-    [switch]$DryRun,
-    [switch]$Experimental
+    [Alias("DryRun","Noop")]
+    [switch]$Experimental,
+    [switch]$WhatIf
 )
 
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
@@ -49,7 +49,7 @@ if($Experimental.IsPresent) {
 
 # Is this a dry run?
 $UseDryRun = "";
-if($DryRun.IsPresent) {
+if($WhatIf.IsPresent) {
     $UseDryRun = "-dryrun"
 }
 
