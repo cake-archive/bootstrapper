@@ -64,7 +64,7 @@ if($Mono.IsPresent) {
 
 # Make sure tools folder exists
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
-    New-Item -path $TOOLS_DIR -name logfiles -itemtype directory
+    New-Item -Path $TOOLS_DIR -Type directory
 }
 
 # Try find NuGet.exe in path if not exists
