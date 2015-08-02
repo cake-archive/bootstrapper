@@ -10,3 +10,4 @@ using System.Reflection;
 [assembly: AssemblyFileVersion("0.0.6")]
 [assembly: AssemblyInformationalVersion("0.0.6")]
 [assembly: AssemblyCopyright("Copyright (c) Patrik Svensson 2014")]
+
