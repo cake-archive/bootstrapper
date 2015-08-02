@@ -4,8 +4,8 @@ Param(
     [string]$Configuration = "Release",
     [ValidateSet("Quiet", "Minimal", "Normal", "Verbose", "Diagnostic")]
     [string]$Verbosity = "Verbose",
-    [Alias("DryRun","Noop")]
     [switch]$Experimental,
+    [Alias("DryRun","Noop")]
     [switch]$WhatIf
 )
 
