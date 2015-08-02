@@ -37,6 +37,7 @@ Param(
     [Alias("DryRun","Noop")]
     [switch]$WhatIf,
     [switch]$Mono,
+    [switch]$SkipToolPackageRestore,
     [switch]$Verbose
 )
 
@@ -102,28 +103,32 @@ if (!(Test-Path $NUGET_EXE)) {
 # Save nuget.exe path to environment to be available to child processed
 $ENV:NUGET_EXE = $NUGET_EXE
 
-# Restore tools from NuGet.
-Push-Location
-Set-Location $TOOLS_DIR
+# Restore tools from NuGet?
+if(-Not $SkipToolPackageRestore.IsPresent)
+{
+    # Restore tools from NuGet.
+    Push-Location
+    Set-Location $TOOLS_DIR
 
-Write-Verbose -Message "Restoring tools from NuGet..."
+    Write-Verbose -Message "Restoring tools from NuGet..."
 
-# Restore packages
-if (Test-Path $PACKAGES_CONFIG)
-{
-    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion"
-    Write-Verbose $NuGetOutput
-}
-# Install just Cake if missing config
-else
-{
-    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion"
-    Write-Verbose $NuGetOutput
-}
-Pop-Location
-if ($LASTEXITCODE -ne 0)
-{
-    exit $LASTEXITCODE
+    # Restore packages
+    if (Test-Path $PACKAGES_CONFIG)
+    {
+        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion"
+        Write-Verbose $NuGetOutput
+    }
+    # Install just Cake if missing config
+    else
+    {
+        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion"
+        Write-Verbose $NuGetOutput
+    }
+    Pop-Location
+    if ($LASTEXITCODE -ne 0)
+    {
+        exit $LASTEXITCODE
+    }
 }
 
 # Make sure that Cake has been installed.
