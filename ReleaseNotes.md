@@ -1,3 +1,11 @@
+### New in 0.1.0 (Released 2015/08/23)
+* Added dry run parameter.
+* Added parameter for experimental script engine.
+* Added Get-Help.
+* Added parameter for Mono script engine.
+* Added support for PowerShell Verbose flag.
+* Added option to skip tool package restore.
+
 ### New in 0.0.6 (Released 2015/04/28)
 * Added support for nightly build of Roslyn.
 * Added option to install empty cake script.
