@@ -133,7 +133,7 @@ if(-Not $SkipToolPackageRestore.IsPresent)
 
 # Make sure that Cake has been installed.
 if (!(Test-Path $CAKE_EXE)) {
-    Throw "Could not find Cake.exe"
+    Throw "Could not find Cake.exe at $CAKE_EXE"
 }
 
 # Start Cake
