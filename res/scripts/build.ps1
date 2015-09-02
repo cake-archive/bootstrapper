@@ -76,7 +76,8 @@ if($WhatIf.IsPresent) {
 
 # Make sure tools folder exists
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
-    New-Item -Path $TOOLS_DIR -Type directory
+    Write-Verbose -Message "Creating tools directory..."
+    New-Item -Path $TOOLS_DIR -Type directory | out-null
 }
 
 # Try find NuGet.exe in path if not exists
