@@ -1,8 +1,8 @@
 <#
- 
+
 .SYNOPSIS
 This is a Powershell script to bootstrap a Cake build.
- 
+
 .DESCRIPTION
 This Powershell script will download NuGet if missing, restore NuGet tools (including Cake)
 and execute your Cake build script with the parameters you provide.
@@ -22,7 +22,7 @@ Performs a dry run of the build script.
 No tasks will be executed.
 .PARAMETER Mono
 Tells Cake to use the Mono scripting engine.
- 
+
 .LINK
 http://cakebuild.net
 #>
@@ -85,7 +85,7 @@ if (!(Test-Path $NUGET_EXE)) {
     ($NUGET_EXE_IN_PATH = &where.exe nuget.exe) | out-null
     if ($NUGET_EXE_IN_PATH -ne $null -and (Test-Path $NUGET_EXE_IN_PATH)) {
         "Found $($NUGET_EXE_IN_PATH)."
-        $NUGET_EXE = $NUGET_EXE_IN_PATH 
+        $NUGET_EXE = $NUGET_EXE_IN_PATH
     }
 }
 
@@ -116,13 +116,13 @@ if(-Not $SkipToolPackageRestore.IsPresent)
     if (Test-Path $PACKAGES_CONFIG)
     {
         $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
-        Write-Verbose $NuGetOutput
+        Write-Verbose -Message ($NuGetOutput | out-string)
     }
     # Install just Cake if missing config
     else
     {
         $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
-        Write-Verbose $NuGetOutput
+        Write-Verbose -Message ($NuGetOutput | out-string)
     }
     Pop-Location
     if ($LASTEXITCODE -ne 0)
