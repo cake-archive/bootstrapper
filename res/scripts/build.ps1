@@ -115,13 +115,13 @@ if(-Not $SkipToolPackageRestore.IsPresent)
     # Restore packages
     if (Test-Path $PACKAGES_CONFIG)
     {
-        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion"
+        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
         Write-Verbose $NuGetOutput
     }
     # Install just Cake if missing config
     else
     {
-        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion"
+        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
         Write-Verbose $NuGetOutput
     }
     Pop-Location
