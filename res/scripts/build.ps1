@@ -83,7 +83,9 @@ if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
 # Make sure that packages.config exist.
 if (!(Test-Path $PACKAGES_CONFIG)) {
     Write-Verbose -Message "Downloading packages.config..."
-    Invoke-WebRequest -Uri http://cakebuild.net/bootstrapper/packages -OutFile $PACKAGES_CONFIG
+    try { Invoke-WebRequest -Uri http://cakebuild.net/bootstrapper/packages -OutFile $PACKAGES_CONFIG } catch {
+        Throw "Could not download packages.config."
+    }
 }
 
 # Try find NuGet.exe in path if not exists
@@ -99,12 +101,9 @@ if (!(Test-Path $NUGET_EXE)) {
 # Try download NuGet.exe if not exists
 if (!(Test-Path $NUGET_EXE)) {
     Write-Verbose -Message "Downloading NuGet.exe..."
-    Invoke-WebRequest -Uri http://nuget.org/nuget.exe -OutFile $NUGET_EXE
-}
-
-# Make sure NuGet exists where we expect it.
-if (!(Test-Path $NUGET_EXE)) {
-    Throw "Could not find NuGet.exe"
+    try { Invoke-WebRequest -Uri http://nuget.org/nuget.exe -OutFile $NUGET_EXE } catch {
+        Throw "Could not download NuGet.exe."
+    }
 }
 
 # Save nuget.exe path to environment to be available to child processed
@@ -113,24 +112,14 @@ $ENV:NUGET_EXE = $NUGET_EXE
 # Restore tools from NuGet?
 if(-Not $SkipToolPackageRestore.IsPresent)
 {
-    # Restore tools from NuGet.
+    # Restore packages from NuGet.
     Push-Location
     Set-Location $TOOLS_DIR
 
     Write-Verbose -Message "Restoring tools from NuGet..."
+    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
+    Write-Verbose -Message ($NuGetOutput | out-string)
 
-    # Restore packages
-    if (Test-Path $PACKAGES_CONFIG)
-    {
-        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
-        Write-Verbose -Message ($NuGetOutput | out-string)
-    }
-    # Install just Cake if missing config
-    else
-    {
-        $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
-        Write-Verbose -Message ($NuGetOutput | out-string)
-    }
     Pop-Location
     if ($LASTEXITCODE -ne 0)
     {
