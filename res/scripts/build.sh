@@ -31,6 +31,21 @@ for i in "$@"; do
     shift
 done
 
+# Make sure the tools folder exist.
+if [ ! -d $TOOLS_DIR ]; then
+  mkdir $TOOLS_DIR
+fi
+
+# Make sure that packages.config exist.
+if [ ! -f $TOOLS_DIR/packages.config ]; then
+    echo "Downloading packages.config..."
+    curl -Lsfo $TOOLS_DIR/packages.config http://cakebuild.net/bootstrapper/packages
+    if [ $? -ne 0 ]; then
+        echo "An error occured while downloading packages.config."
+        exit 1
+    fi
+fi
+
 # Download NuGet if it does not exist.
 if [ ! -f $NUGET_EXE ]; then
     echo "Downloading NuGet..."
@@ -44,11 +59,15 @@ fi
 # Restore tools from NuGet.
 pushd $TOOLS_DIR >/dev/null
 mono $NUGET_EXE install -ExcludeVersion
+if [ $? -ne 0 ]; then
+    echo "Could not restore NuGet packages."
+    exit 1
+fi
 popd >/dev/null
 
 # Make sure that Cake has been installed.
 if [ ! -f $CAKE_EXE ]; then
-    echo "Could not find Cake.exe."
+    echo "Could not find Cake.exe at '$CAKE_EXE'."
     exit 1
 fi
 
