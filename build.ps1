@@ -9,9 +9,11 @@ Param(
     [switch]$WhatIf
 )
 
+$PSScriptRoot = split-path -parent $MyInvocation.MyCommand.Definition;
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $CAKE_EXE = Join-Path $TOOLS_DIR "Cake/Cake.exe"
+$NUGET_URL = "https://nuget.org/nuget.exe"
 
 # Should we use the new Roslyn?
 $UseExperimental = "";
@@ -28,8 +30,10 @@ if($WhatIf.IsPresent) {
 # Make sure NuGet exists where we expect it.
 if (!(Test-Path $NUGET_EXE)) {
     # Try download NuGet.exe if not exists
-    if (!(Test-Path $NUGET_EXE)) {
-        Invoke-WebRequest -Uri http://nuget.org/nuget.exe -OutFile $NUGET_EXE
+    try {
+        (New-Object System.Net.WebClient).DownloadFile($NUGET_URL, $NUGET_EXE)
+    } catch {
+        Throw "Could not download NuGet.exe."
     }
 }
 
