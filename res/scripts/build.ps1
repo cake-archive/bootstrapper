@@ -25,6 +25,7 @@ Tells Cake to use the Mono scripting engine.
 
 .LINK
 http://cakebuild.net
+
 #>
 
 Param(
@@ -90,11 +91,12 @@ if (!(Test-Path $PACKAGES_CONFIG)) {
 
 # Try find NuGet.exe in path if not exists
 if (!(Test-Path $NUGET_EXE)) {
-    Write-Verbose -Message "Trying to find nuget.exe in path..."
-    ($NUGET_EXE_IN_PATH = &where.exe nuget.exe) | out-null
-    if ($NUGET_EXE_IN_PATH -ne $null -and (Test-Path $NUGET_EXE_IN_PATH)) {
-        "Found $($NUGET_EXE_IN_PATH)."
-        $NUGET_EXE = $NUGET_EXE_IN_PATH
+    Write-Verbose -Message "Trying to find nuget.exe in PATH..."
+    $existingPaths = $Env:Path -Split ';' | Where-Object { Test-Path $_ }
+    $NUGET_EXE_IN_PATH = Get-ChildItem -Path $existingPaths -Filter "nuget.exe" | Select -First 1
+    if ($NUGET_EXE_IN_PATH -ne $null -and (Test-Path $NUGET_EXE_IN_PATH.FullName)) {
+        Write-Verbose -Message "Found in PATH at $($NUGET_EXE_IN_PATH.FullName)."
+        $NUGET_EXE = $NUGET_EXE_IN_PATH.FullName
     }
 }
 
