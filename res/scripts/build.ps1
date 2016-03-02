@@ -103,7 +103,7 @@ if (!(Test-Path $NUGET_EXE)) {
 # Try download NuGet.exe if not exists
 if (!(Test-Path $NUGET_EXE)) {
     Write-Verbose -Message "Downloading NuGet.exe..."
-    try { Invoke-WebRequest -Uri http://nuget.org/nuget.exe -OutFile $NUGET_EXE } catch {
+    try { Invoke-WebRequest -Uri http://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NUGET_EXE } catch {
         Throw "Could not download NuGet.exe."
     }
 }
