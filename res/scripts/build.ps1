@@ -40,7 +40,7 @@ Param(
     [switch]$Mono,
     [switch]$SkipToolPackageRestore,
     [switch]$Verbose,
-    [Parameter(ValueFromRemainingArguments = $true)]
+    [Parameter(Position=0,Mandatory=$false,ValueFromRemainingArguments=$true)]
     [string[]]$ScriptArgs
 )
 
