@@ -28,6 +28,7 @@ http://cakebuild.net
 
 #>
 
+[CmdletBinding()]
 Param(
     [string]$Script = "build.cake",
     [string]$Target = "Default",
@@ -39,18 +40,11 @@ Param(
     [switch]$WhatIf,
     [switch]$Mono,
     [switch]$SkipToolPackageRestore,
-    [switch]$Verbose,
     [Parameter(Position=0,Mandatory=$false,ValueFromRemainingArguments=$true)]
     [string[]]$ScriptArgs
 )
 
 Write-Host "Preparing to run build script..."
-
-# Should we show verbose messages?
-if($Verbose.IsPresent)
-{
-    $VerbosePreference = "continue"
-}
 
 $PS_SCRIPT_ROOT = split-path -parent $MyInvocation.MyCommand.Definition;
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
