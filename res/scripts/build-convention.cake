@@ -33,6 +33,7 @@ Teardown(() =>
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Clean")
+    .Description("Cleans all directories that are used during the build process.")
     .Does(() =>
 {
     // Clean solution directories.
@@ -45,6 +46,7 @@ Task("Clean")
 });
 
 Task("Restore")
+    .Description("Restores all the NuGet packages that are used by the specified solution.")
     .Does(() =>
 {
     // Restore all NuGet packages.
@@ -56,6 +58,7 @@ Task("Restore")
 });
 
 Task("Build")
+    .Description("Builds all the different parts of the project.")
     .IsDependentOn("Clean")
     .IsDependentOn("Restore")
     .Does(() =>
@@ -64,7 +67,7 @@ Task("Build")
     foreach(var solution in solutions)
     {
         Information("Building {0}", solution);
-        MSBuild(solution, settings => 
+        MSBuild(solution, settings =>
             settings.SetPlatformTarget(PlatformTarget.MSIL)
                 .WithProperty("TreatWarningsAsErrors","true")
                 .WithTarget("Build")
@@ -77,6 +80,7 @@ Task("Build")
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Default")
+    .Description("This is the default task which will be ran if no specific target is passed in.")
     .IsDependentOn("Build");
 
 ///////////////////////////////////////////////////////////////////////////////
