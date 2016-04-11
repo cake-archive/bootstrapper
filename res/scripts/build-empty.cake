@@ -26,11 +26,13 @@ Teardown(() =>
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Clean")
+    .Description("Cleans all directories that are used during the build process.")
     .Does(() =>
 {
 });
 
 Task("Build")
+    .Description("Builds all the different parts of the project.")
     .IsDependentOn("Clean")
     .Does(() =>
 {
@@ -41,6 +43,7 @@ Task("Build")
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Default")
+    .Description("This is the default task which will be ran if no specific target is passed in.")
     .IsDependentOn("Build");
 
 ///////////////////////////////////////////////////////////////////////////////
